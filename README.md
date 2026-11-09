@@ -31,7 +31,8 @@ flowchart LR
     SAPI --> S
     S --> C
     C --> U
-    MAPI <-. optional tool decisions .-> J[Jev helper]
+    MAPI -. optional tool request .-> J[Jev helper]
+    J -. selected tool .-> MAPI
 ```
 
 Core decides whether to make a Support request. Main results and Support
