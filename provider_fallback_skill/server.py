@@ -41,7 +41,10 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
 
     @app.exception_handler(RoutingFailure)
     async def failed(_request, error):
-        return JSONResponse({"error": {"code": error.code}}, status_code=error.status)
+        detail = {"code": error.code}
+        if error.request_id:
+            detail["request_id"] = error.request_id
+        return JSONResponse({"error": detail}, status_code=error.status)
 
     @app.get("/v1/models")
     async def models():
@@ -90,7 +93,10 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
             finally:
                 await upstream.aclose()
 
-        headers = {"x-wingman-waterfall-route": upstream.route_id}
+        headers = {
+            "x-wingman-waterfall-route": upstream.route_id,
+            "x-wingman-waterfall-request-id": upstream.request_id,
+        }
         for key in ("content-type", "content-encoding"):
             if key in upstream.response.headers:
                 headers[key] = upstream.response.headers[key]

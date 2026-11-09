@@ -1,7 +1,7 @@
 module: skills.provider_fallback.main
 name: ProviderFallback
 api_version: 3
-version: 0.1.1
+version: 0.2.0
 display_name: Provider fallback
 author: Star Citizen Computer contributors
 description:
@@ -23,7 +23,24 @@ custom_properties:
     required: true
   - id: routes_json
     name: Ordered provider routes JSON
-    hint: JSON array of route_id, endpoint, model, optional secret_name, request_overrides and final_local.
+    hint: Ordered route_id, endpoint, model, secret_name, request_overrides, final_local, wire_protocol and optional jev_assist. Jev can add latency or reduce accuracy; leave off unless your tasks benefit.
     property_type: string
     value: "[]"
     required: true
+  - id: fallback_mode
+    name: Automatic fallback
+    property_type: single_select
+    options:
+      - label: Credit exhaustion only (recommended)
+        value: credits_only
+      - label: Provider availability
+        value: availability
+      - label: Manual only
+        value: manual
+    value: credits_only
+    required: false
+  - id: notify_switches
+    name: Notify when provider changes
+    property_type: boolean
+    value: true
+    required: false

@@ -8,10 +8,13 @@ import math
 import re
 import threading
 import time
+import uuid
 from dataclasses import dataclass, field
 from urllib.parse import urlsplit
 
 import httpx
+
+from .native_messages import NativeMessagesError, from_native, to_native
 
 
 @dataclass(frozen=True)
@@ -22,6 +25,15 @@ class RouteSpec:
     secret_name: str | None = None
     request_overrides: dict = field(default_factory=dict)
     final_local: bool = False
+    wire_protocol: str = "openai_chat"
+    jev_assist: bool = False
+    jev_min_confidence: float = 0.8
+    fallback_on: tuple[str, ...] = (
+        "credit_exhausted",
+        "authentication_or_model_unavailable",
+        "temporary_unavailable",
+        "connection_unavailable",
+    )
 
     def __post_init__(self):
         url = urlsplit(self.endpoint)
@@ -33,7 +45,15 @@ class RouteSpec:
             or url.password
             or url.query
             or url.fragment
-            or not url.path.endswith("/chat/completions")
+            or self.wire_protocol not in {"openai_chat", "anthropic_messages"}
+            or not url.path.endswith(
+                "/messages" if self.wire_protocol == "anthropic_messages" else "/chat/completions"
+            )
+            or type(self.final_local) is not bool
+            or type(self.jev_assist) is not bool
+            or type(self.jev_min_confidence) not in (int, float)
+            or not math.isfinite(self.jev_min_confidence)
+            or not 0 <= self.jev_min_confidence <= 1
             or type(self.model) is not str
             or not self.model.strip()
             or (
@@ -41,8 +61,19 @@ class RouteSpec:
                 and (type(self.secret_name) is not str or not self.secret_name.strip())
             )
             or type(self.request_overrides) is not dict
+            or type(self.fallback_on) not in (list, tuple)
+            or any(
+                x
+                not in {
+                    "credit_exhausted",
+                    "authentication_or_model_unavailable",
+                    "temporary_unavailable",
+                    "connection_unavailable",
+                }
+                for x in self.fallback_on
+            )
         ):
-            raise ValueError("Invalid provider route; use an explicit compatible chat endpoint")
+            raise ValueError("Invalid provider route or protocol endpoint")
         if set(self.request_overrides) & {"messages", "tools", "tool_choice", "model", "stream"}:
             raise ValueError("Route overrides cannot replace messages, tools, model or stream")
         json.dumps(self.request_overrides, allow_nan=False)
@@ -54,6 +85,7 @@ class Upstream:
     client: httpx.AsyncClient
     route_id: str
     owner: ProviderWaterfall
+    request_id: str = ""
     closed: bool = False
 
     async def aclose(self):
@@ -68,10 +100,11 @@ class Upstream:
 
 
 class RoutingFailure(Exception):
-    def __init__(self, status: int, code: str):
+    def __init__(self, status: int, code: str, request_id: str | None = None):
         super().__init__(code)
         self.status = status
         self.code = code
+        self.request_id = request_id
 
 
 class ProviderWaterfall:
@@ -84,6 +117,8 @@ class ProviderWaterfall:
         timeout_seconds=30,
         response_limit_bytes=8 * 1024 * 1024,
         cooldown_seconds=30,
+        assistance=None,
+        on_event=None,
     ):
         self.routes = tuple(routes)
         if (
@@ -110,6 +145,66 @@ class ProviderWaterfall:
         self._exhausted = set()
         self._active = {}
         self._closed = False
+        self.assistance = assistance
+        self.on_event = on_event
+        self._last_selected_route = None
+        self._last_failure = None
+
+    def note_notification_failed(self):
+        with self._lock:
+            self._notification_failed = True
+
+    def _failure(self, route, reason, status, *, request_id=None, provider_request_id=None):
+        event = {
+            "route_id": route.route_id,
+            "model": route.model,
+            "reason": reason,
+            "http_status": status,
+            "request_id": request_id,
+        }
+        if provider_request_id and re.fullmatch(r"[A-Za-z0-9_.:-]{1,160}", provider_request_id):
+            event["provider_request_id"] = provider_request_id
+        with self._lock:
+            self._last_failure = event
+            self._state[route.route_id] = {
+                "reason": reason,
+                "http_status": status,
+                "request_id": request_id,
+            }
+            if reason not in route.fallback_on and reason in {
+                "credit_exhausted",
+                "authentication_or_model_unavailable",
+            }:
+                self._state[route.route_id]["terminal_error_status"] = status
+        self._event({"kind": "failure", **event})
+        if reason not in route.fallback_on:
+            code = (
+                "provider_refused"
+                if reason == "provider_refused"
+                else "fallback_disabled_for_error"
+            )
+            raise RoutingFailure(status, code, request_id)
+
+    def _terminal(self, route, status, code, request_id):
+        event = {
+            "route_id": route.route_id,
+            "model": route.model,
+            "reason": code,
+            "http_status": status,
+            "request_id": request_id,
+        }
+        with self._lock:
+            self._last_failure = event
+        self._event({"kind": "failure", **event})
+        return RoutingFailure(status, code, request_id)
+
+    def _event(self, event):
+        if self.on_event is not None:
+            try:
+                self.on_event(event)
+            except Exception:
+                with self._lock:
+                    self._notification_failed = True
 
     @staticmethod
     def _account(route):
@@ -119,11 +214,17 @@ class ProviderWaterfall:
         with self._lock:
             return {
                 "closed": self._closed,
+                "last_selected_route": self._last_selected_route,
+                "last_failure": self._last_failure,
+                "notification_failed": getattr(self, "_notification_failed", False),
                 "routes": [
                     {
                         "route_id": r.route_id,
                         "model": r.model,
                         "final_local": r.final_local,
+                        "wire_protocol": r.wire_protocol,
+                        "jev_assist": r.jev_assist,
+                        "fallback_on": list(r.fallback_on),
                         "credit_exhausted": self._account(r) in self._exhausted,
                         **self._state.get(r.route_id, {}),
                     }
@@ -136,6 +237,9 @@ class ProviderWaterfall:
             if route_id is None:
                 self._state.clear()
                 self._exhausted.clear()
+                self._last_failure = None
+                if self.assistance is not None:
+                    self.assistance.reset()
             else:
                 route = next((r for r in self.routes if r.route_id == route_id), None)
                 if route is None:
@@ -146,11 +250,16 @@ class ProviderWaterfall:
 
     async def _headers(self, route):
         headers = {"Accept-Encoding": "identity"}
+        if route.wire_protocol == "anthropic_messages":
+            headers["anthropic-version"] = "2023-06-01"
         if route.secret_name:
             token = await self.resolve_secret(route.secret_name)
             if not token or type(token) is not str:
                 return None
-            headers["Authorization"] = "Bearer " + token
+            if route.wire_protocol == "anthropic_messages":
+                headers["x-api-key"] = token
+            else:
+                headers["Authorization"] = "Bearer " + token
         return headers
 
     async def _read(self, response):
@@ -163,11 +272,24 @@ class ProviderWaterfall:
 
     async def open(self, payload, *, bridge_port=None):
         """Inspect upstream status before the caller commits HTTP response headers."""
+        request_id = uuid.uuid4().hex
         for route in self.routes:
             with self._lock:
                 if self._closed:
-                    raise RoutingFailure(503, "bridge_closed")
+                    raise self._terminal(route, 503, "bridge_closed", request_id)
                 state = self._state.get(route.route_id, {})
+                if state.get("terminal_error_status"):
+                    raise self._terminal(
+                        route,
+                        state["terminal_error_status"],
+                        "fallback_disabled_for_error",
+                        request_id,
+                    )
+                if (
+                    self._account(route) in self._exhausted
+                    and "credit_exhausted" not in route.fallback_on
+                ):
+                    raise self._terminal(route, 402, "fallback_disabled_for_error", request_id)
                 if (
                     self._account(route) in self._exhausted
                     or state.get("disabled_until_reset")
@@ -180,9 +302,12 @@ class ProviderWaterfall:
                 and url.hostname in {"localhost", "127.0.0.1", "::1"}
                 and url.port == bridge_port
             ):
-                raise RoutingFailure(400, "recursive_bridge_route")
+                raise self._terminal(route, 400, "recursive_bridge_route", request_id)
             headers = await self._headers(route)
             if headers is None:
+                self._failure(
+                    route, "authentication_or_model_unavailable", 401, request_id=request_id
+                )
                 with self._lock:
                     self._state[route.route_id] = {
                         "reason": "missing_secret",
@@ -198,19 +323,98 @@ class ProviderWaterfall:
                 with self._lock:
                     if self._closed:
                         raise RoutingFailure(503, "bridge_closed")
-                body = {**payload, **route.request_overrides, "model": route.model}
+                selected_payload = payload
+                assistance_status = None
+                if route.jev_assist and self.assistance is not None:
+                    from .jev_assist import NativeJevRefused
+
+                    try:
+                        selected_payload, assistance_status = await self.assistance.assist(
+                            payload, route.jev_min_confidence
+                        )
+                    except NativeJevRefused:
+                        raise RoutingFailure(403, "decision_provider_refused") from None
+                with self._lock:
+                    if self._closed:
+                        raise RoutingFailure(503, "bridge_closed")
+                if route.wire_protocol == "anthropic_messages":
+                    try:
+                        binding = [route.endpoint, route.secret_name or route.route_id, route.model]
+                        native_payload = dict(selected_payload)
+                        native_payload["messages"] = []
+                        for message in selected_payload["messages"]:
+                            if type(message) is not dict:
+                                raise NativeMessagesError("invalid_message")
+                            message = dict(message)
+                            # A fallback is a fresh provider/model context. Only the
+                            # original route can replay its opaque signed blocks.
+                            if message.pop("wingman_native_route", None) != binding:
+                                message.pop("wingman_native_state", None)
+                            native_payload["messages"].append(message)
+                        body = to_native(native_payload, route.model, route.request_overrides)
+                    except NativeMessagesError as exc:
+                        raise RoutingFailure(400, str(exc)) from None
+                else:
+                    # Provider-specific signed state must not cross to another provider.
+                    body = {**selected_payload, **route.request_overrides, "model": route.model}
+                    body["messages"] = [
+                        {
+                            k: v
+                            for k, v in message.items()
+                            if k not in {"wingman_native_state", "wingman_native_route"}
+                        }
+                        if isinstance(message, dict)
+                        else message
+                        for message in body["messages"]
+                    ]
                 request = client.build_request("POST", route.endpoint, headers=headers, json=body)
                 response = await client.send(request, stream=True)
                 status = response.status_code
                 if status == 200:
-                    upstream = Upstream(response, client, route.route_id, self)
+                    if route.wire_protocol == "anthropic_messages":
+                        try:
+                            document = json.loads(await self._read(response))
+                            converted_doc = from_native(document, route.model)
+                            converted_doc["choices"][0]["message"]["wingman_native_route"] = binding
+                            converted = json.dumps(converted_doc, allow_nan=False).encode("utf-8")
+                        except (ValueError, TypeError, KeyError):
+                            raise RoutingFailure(502, "native_response_invalid") from None
+                        if len(converted) > self.response_limit_bytes:
+                            raise RoutingFailure(502, "upstream_response_too_large")
+                        await response.aclose()
+                        response = httpx.Response(
+                            200,
+                            stream=httpx.ByteStream(converted),
+                            request=request,
+                            headers={"content-type": "application/json"},
+                        )
+                    upstream = Upstream(
+                        response, client, route.route_id, self, request_id=request_id
+                    )
                     with self._lock:
                         if self._closed:
                             raise RoutingFailure(503, "bridge_closed")
                         self._state[route.route_id] = {"reason": "selected"}
+                        if assistance_status is not None:
+                            self._state[route.route_id]["jev"] = assistance_status
                         self._active[id(upstream)] = upstream
                         handed_off = True
+                        previous = self._last_selected_route
+                        self._last_selected_route = route.route_id
+                    if previous != route.route_id:
+                        self._event(
+                            {
+                                "kind": "selection",
+                                "route_id": route.route_id,
+                                "model": route.model,
+                                "previous_route_id": previous,
+                                "fallback": route is not self.routes[0],
+                                "request_id": request_id,
+                            }
+                        )
                     return upstream
+                if status == 504:
+                    raise RoutingFailure(504, "upstream_timeout_unknown")
                 raw = await self._read(response)
                 try:
                     error = json.loads(raw).get("error", {})
@@ -226,7 +430,12 @@ class ProviderWaterfall:
                     "content_filter",
                     "moderation_blocked",
                 }:
-                    raise RoutingFailure(status if status >= 400 else 403, "provider_refused")
+                    self._failure(
+                        route,
+                        "provider_refused",
+                        status if status >= 400 else 403,
+                        request_id=request_id,
+                    )
                 anthropic_credit = (
                     url.hostname == "api.anthropic.com"
                     and status == 400
@@ -247,16 +456,44 @@ class ProviderWaterfall:
                         "credit_balance_too_low",
                     }
                 )
+                reason = (
+                    "credit_exhausted"
+                    if exhausted
+                    else "authentication_or_model_unavailable"
+                    if status in {401, 404}
+                    else "temporary_unavailable"
+                    if status in {429, 500, 502, 503}
+                    or (status == 529 and url.hostname == "api.anthropic.com")
+                    else None
+                )
+                if reason is not None:
+                    provider_request_id = response.headers.get(
+                        "request-id"
+                    ) or response.headers.get("x-request-id")
+                    # Do not retain a reflected authentication value as a request ID.
+                    if any(
+                        value.removeprefix("Bearer ") in (provider_request_id or "")
+                        for key, value in headers.items()
+                        if key in {"Authorization", "x-api-key"}
+                    ):
+                        provider_request_id = None
+                    self._failure(
+                        route,
+                        reason,
+                        status,
+                        request_id=request_id,
+                        provider_request_id=provider_request_id,
+                    )
                 with self._lock:
                     if exhausted:
                         self._exhausted.add(self._account(route))
-                        self._state[route.route_id] = {"reason": "credit_exhausted"}
+                        self._state[route.route_id].update(reason="credit_exhausted")
                     elif status in {401, 404}:
                         self._state[route.route_id] = {
                             "reason": "authentication_or_model_unavailable",
                             "disabled_until_reset": True,
                         }
-                    elif status in {429, 500, 502, 503, 504} or (
+                    elif status in {429, 500, 502, 503} or (
                         status == 529 and url.hostname == "api.anthropic.com"
                     ):
                         retry = response.headers.get("retry-after", "")
@@ -271,23 +508,28 @@ class ProviderWaterfall:
                         }
                     else:
                         raise RoutingFailure(status, "upstream_request_rejected")
+            except RoutingFailure as exc:
+                if exc.request_id is None:
+                    raise self._terminal(route, exc.status, exc.code, request_id) from None
+                raise
             except httpx.ConnectError:
+                self._failure(route, "connection_unavailable", 503, request_id=request_id)
                 with self._lock:
                     self._state[route.route_id] = {
                         "reason": "connection_unavailable",
                         "retry_at": time.monotonic() + self.cooldown_seconds,
                     }
-            except httpx.TimeoutException as exc:
+            except httpx.TimeoutException:
                 # An ambiguous in-flight timeout is not silently replayed elsewhere.
-                raise RoutingFailure(504, "upstream_timeout_unknown") from exc
-            except httpx.HTTPError as exc:
-                raise RoutingFailure(502, "upstream_transport_unknown") from exc
+                raise self._terminal(route, 504, "upstream_timeout_unknown", request_id) from None
+            except httpx.HTTPError:
+                raise self._terminal(route, 502, "upstream_transport_unknown", request_id) from None
             finally:
                 if not handed_off:
                     if response is not None:
                         await response.aclose()
                     await client.aclose()
-        raise RoutingFailure(503, "no_available_provider")
+        raise self._terminal(route, 503, "no_available_provider", request_id)
 
     async def discover_models(self, route_id):
         route = next((r for r in self.routes if r.route_id == route_id), None)
@@ -296,10 +538,14 @@ class ProviderWaterfall:
         headers = await self._headers(route)
         if headers is None:
             raise RoutingFailure(401, "missing_secret")
-        if urlsplit(route.endpoint).hostname == "api.anthropic.com":
+        if (
+            urlsplit(route.endpoint).hostname == "api.anthropic.com"
+            and route.wire_protocol == "openai_chat"
+        ):
             headers["x-api-key"] = headers.pop("Authorization").removeprefix("Bearer ")
             headers["anthropic-version"] = "2023-06-01"
-        url = route.endpoint.removesuffix("/chat/completions") + "/models"
+        suffix = "/messages" if route.wire_protocol == "anthropic_messages" else "/chat/completions"
+        url = route.endpoint.removesuffix(suffix) + "/models"
         async with self.client_factory(
             trust_env=False, follow_redirects=False, timeout=self.timeout_seconds
         ) as client:

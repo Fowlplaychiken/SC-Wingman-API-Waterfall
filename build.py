@@ -37,6 +37,8 @@ def build(out: Path) -> Path:
         ("__init__.py", "__init__.py"),
         ("routing.py", "routing.py"),
         ("server.py", "server.py"),
+        ("native_messages.py", "native_messages.py"),
+        ("jev_assist.py", "jev_assist.py"),
     ):
         files[f"dependencies/{namespace}/" + package_name] = (source / source_name).read_bytes()
     manifest = {

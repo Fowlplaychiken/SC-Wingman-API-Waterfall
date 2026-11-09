@@ -1,6 +1,6 @@
 [project]
 name = "wingman-api-waterfall"
-version = "0.1.0"
+version = "0.2.0"
 description = "Optional Wingman OpenAI-compatible provider waterfall skill"
 requires-python = ">=3.11"
 license = {text = "GPL-3.0-or-later"}
