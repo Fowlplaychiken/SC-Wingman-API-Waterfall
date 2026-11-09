@@ -3,6 +3,18 @@
 Wingman Core is the coordinating software, not a fourth AI model. It calls the
 configured Main, Support, decision and embedding interfaces when needed.
 
+![Simplified stock Wingman conversation flow](diagrams/WINGMAN-STOCK-FLOW.png)
+
+This stock-only view follows Wingman 3.2.14 at the source revision below.
+Support returns facts/summaries to Core, which includes relevant context in
+Main requests. Jev returns bounded decisions to Core's routing/action code;
+it does not rewrite the Support model. A preselected command can still require
+Main to generate its acknowledgement. The tools/Main arrows represent Core's
+interfaces, not direct model execution of operations. Not every turn invokes
+every role. Support's stored context is conditional/background, not a required
+round-trip on every request. The decision provider/model is configurable;
+Jev is not the only allowed decision model. [Editable flow](diagrams/WINGMAN-STOCK-FLOW.mmd).
+
 See [model placement and hosted baselines](research/WINGMAN-MODEL-PLACEMENT-2026-11-09.md)
 for role-specific recommendations and the remaining comparison gap. The vision
 box describes an image-capable Main model, not an additional stock model.
