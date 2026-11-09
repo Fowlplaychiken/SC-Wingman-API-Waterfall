@@ -86,6 +86,16 @@ Choose `credits_only` to fall back on definite exhaustion, `availability` to inc
 
 ### Development comparison
 
+#### Does the same model need a separate Support call?
+
+![Short-history and actual hosted Support comparison](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.png)
+
+[Follow-up report](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.md) · [Data](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.json) · [Separate session-memory research](benchmarks/WINGMAN-SESSION-MEMORY-RESEARCH-2026-11-09.md)
+
+In eight short-history tasks, Haiku Main scored 7/8 with either full history or an earlier Haiku summary. Waiting for a new summary added time and cost; an already prepared summary reduced measured foreground work. This does not test long sessions near their context budget, and the reused controls are not a repeated causal experiment. Costs scale the stated trial mix to 1,000; background summaries are conditional, not one extra call per question.
+
+Actual Wingman-hosted Support calls returned GLM 5.3 Flash by default and also worked with Haiku 5.5 on the existing Free plan. Dollar/quota consumption was not exposed. Saved settings were unchanged. **Waterfall routes Main; it does not replace Core's global Support or memory policy.** The supported hosted Haiku option is distinct from a direct Anthropic BYOK Support selector.
+
 #### Main and Support roles — stock Jev only
 
 ![Main and Support comparison](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.png)
@@ -94,7 +104,7 @@ Choose `credits_only` to fall back on definite exhaustion, `availability` to inc
 
 This separate 24-task source replay compares Haiku/Qwen Main and Support, with stock command preselection on/off. It **does not use this module's optional first-tool helper**. Haiku/Haiku matched 21/24 references versus 18/24 for Haiku/Qwen, 17/24 for Qwen/Haiku and 14/24 for Qwen/Qwen. Stock Jev shortened command selection without changing task success in this controlled replay. These are AI-reviewed synthetic tasks, not live Wingman or gameplay results.
 
-The chart separates conditional background Support jobs from foreground time and cost. Costs are estimates per 1,000 copies of this trial mix, not 1,000 measured tasks or a full-session bill. Shared stages are explicitly replayed. Haiku Support is a measured candidate: stock settings do not expose a direct Anthropic BYOK Support selector, and Waterfall currently routes **Main**, not Support. The actual Wingman-hosted Support baseline remains unmeasured. No personal setting was changed by these tests.
+The chart separates conditional background Support jobs from foreground time and cost. Costs are estimates per 1,000 copies of this trial mix, not 1,000 measured tasks or a full-session bill. Shared stages are explicitly replayed. Stock settings do not expose a direct Anthropic BYOK Support selector, and Waterfall routes **Main**, not Support. The later follow-up above measures the supported Wingman-hosted Support service; this earlier matrix remains a separate frozen cohort. No personal setting was changed by these tests.
 
 #### Broader Main-model comparison — optional added helper
 

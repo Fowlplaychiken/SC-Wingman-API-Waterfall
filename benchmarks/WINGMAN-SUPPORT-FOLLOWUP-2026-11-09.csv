@@ -1,0 +1,7 @@
+strategy,jev,correct,total,unknown,median_ms,cost_usd_per_1000_trials_estimate
+"Full history, one Main job",False,7,8,0,2244.6261,1.1787
+"Full history, one Main job",True,7,8,0,2403.899349999387,1.214337
+"Summary already ready, Main only",False,7,8,0,1929.8748,1.1335374999999999
+"Summary already ready, Main only",True,7,8,0,2093.0267499933348,1.1691745
+"Wait for summary, then Main",False,7,8,0,3412.393100006516,1.293225
+"Wait for summary, then Main",True,7,8,0,3537.0867000017415,1.328862

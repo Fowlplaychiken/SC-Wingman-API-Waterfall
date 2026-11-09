@@ -1,0 +1,850 @@
+{
+  "date": "2026-11-09",
+  "scope": "Eight short history-dependent tasks; source replay, not a long-context or native session benchmark.",
+  "history_characters": {
+    "min": 175,
+    "max": 2209
+  },
+  "strategies": [
+    {
+      "strategy": "Full history, one Main job",
+      "jev": false,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 2244.6261,
+      "cost_usd_per_1000_trials_estimate": 1.1787,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Reports 402.6 km and the distance reference time, identifies Teasa as last logged, and disclaims live position.",
+          "main_ms": 3108.2012,
+          "main_cost_usd_estimate": 0.0013135,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Says city is unconfirmed. No terminal/location read was actually executed; the available location read could have confirmed Teasa Trade Center, Lorville, but the response omits confirmation.",
+          "main_ms": 4933.9789,
+          "main_cost_usd_estimate": 0.0015110000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Reports the landing gear binding as N from the profile lookup.",
+          "main_ms": 1993.5151,
+          "main_cost_usd_estimate": 0.0012111000000000001,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Reports both Ctrl+K actions from the read and states the lookup did not change anything.",
+          "main_ms": 2474.3019,
+          "main_cost_usd_estimate": 0.0010960000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly identifies New Babbage as a city on microTech in Stanton.",
+          "main_ms": 1193.4442,
+          "main_cost_usd_estimate": 0.0010086000000000001,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Returns the station list and explicitly leaves playback unchanged.",
+          "main_ms": 1870.512,
+          "main_cost_usd_estimate": 0.0010345,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "States the origin is missing, asks for it, and avoids inventing a distance.",
+          "main_ms": 2631.7963,
+          "main_cost_usd_estimate": 0.0011589,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Uses the finance report, states 52,000 aUEC proceeds, and correctly leaves profit unknown without cost and fees.",
+          "main_ms": 2014.9503,
+          "main_cost_usd_estimate": 0.0010960000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    },
+    {
+      "strategy": "Full history, one Main job",
+      "jev": true,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 2403.899349999387,
+      "cost_usd_per_1000_trials_estimate": 1.214337,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Reports 402.6 km and the distance reference time, identifies Teasa as last logged, and disclaims live position.",
+          "main_ms": 3108.2012,
+          "main_cost_usd_estimate": 0.0013135,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Says city is unconfirmed. No terminal/location read was actually executed; the available location read could have confirmed Teasa Trade Center, Lorville, but the response omits confirmation.",
+          "main_ms": 4933.9789,
+          "main_cost_usd_estimate": 0.0015110000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Reports the landing gear binding as N from the profile lookup.",
+          "main_ms": 1993.5151,
+          "main_cost_usd_estimate": 0.0012111000000000001,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Reports both Ctrl+K actions from the read and states the lookup did not change anything.",
+          "main_ms": 2474.3019,
+          "main_cost_usd_estimate": 0.0010960000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly identifies New Babbage as a city on microTech in Stanton.",
+          "main_ms": 1193.4442,
+          "main_cost_usd_estimate": 0.0010086000000000001,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Returns the station list and explicitly leaves playback unchanged.",
+          "main_ms": 1870.512,
+          "main_cost_usd_estimate": 0.0010345,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "States the origin is missing, asks for it, and avoids inventing a distance.",
+          "main_ms": 2631.7963,
+          "main_cost_usd_estimate": 0.0011589,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Uses the finance report, states 52,000 aUEC proceeds, and correctly leaves profit unknown without cost and fees.",
+          "main_ms": 2014.9503,
+          "main_cost_usd_estimate": 0.0010960000000000002,
+          "support_ms": 0,
+          "support_cost_usd_estimate": 0,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    },
+    {
+      "strategy": "Summary already ready, Main only",
+      "jev": false,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 1929.8748,
+      "cost_usd_per_1000_trials_estimate": 1.1335374999999999,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Uses the corrected logged origin and Everus Harbor, reports the supplied distance/time, and distinguishes logged from current position.",
+          "main_ms": 2989.6843,
+          "main_cost_usd_estimate": 0.0012634,
+          "support_ms": 1543.109899997944,
+          "support_cost_usd_estimate": 0.0002069,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Explicitly claims location filtering confirms city, but supplier ignores that filter for named commodities. Correct guessed city does not make this stated method true.",
+          "main_ms": 3787.9942,
+          "main_cost_usd_estimate": 0.0013061000000000001,
+          "support_ms": 2161.004800000228,
+          "support_cost_usd_estimate": 0.00022820000000000002,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Looks up the requested action and reports N.",
+          "main_ms": 2038.0377,
+          "main_cost_usd_estimate": 0.0011529,
+          "support_ms": 1681.6162000177428,
+          "support_cost_usd_estimate": 0.00025120000000000003,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Uses corrected key and gives both bindings.",
+          "main_ms": 1460.7278,
+          "main_cost_usd_estimate": 0.0010486,
+          "support_ms": 1644.4044999952894,
+          "support_cost_usd_estimate": 0.0001916,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates New Babbage on microTech in Stanton.",
+          "main_ms": 1470.7076,
+          "main_cost_usd_estimate": 0.0010339,
+          "support_ms": 917.5143000029493,
+          "support_cost_usd_estimate": 8.06e-05,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists all stations without proposing playback.",
+          "main_ms": 1627.699,
+          "main_cost_usd_estimate": 0.0010469,
+          "support_ms": 1003.3684999798425,
+          "support_cost_usd_estimate": 0.0001128,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Asks for unknown origin and identifies destination.",
+          "main_ms": 2097.876,
+          "main_cost_usd_estimate": 0.0011202999999999999,
+          "support_ms": 1753.328099992359,
+          "support_cost_usd_estimate": 0.0001427,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and correctly leaves profit unknown because cost and fees are absent; no entry is actually recorded.",
+          "main_ms": 1821.7119,
+          "main_cost_usd_estimate": 0.0010962,
+          "support_ms": 607.4791999999434,
+          "support_cost_usd_estimate": 6.35e-05,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    },
+    {
+      "strategy": "Summary already ready, Main only",
+      "jev": true,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 2093.0267499933348,
+      "cost_usd_per_1000_trials_estimate": 1.1691745,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Uses the corrected logged origin and Everus Harbor, reports the supplied distance/time, and distinguishes logged from current position.",
+          "main_ms": 2989.6843,
+          "main_cost_usd_estimate": 0.0012634,
+          "support_ms": 1543.109899997944,
+          "support_cost_usd_estimate": 0.0002069,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Explicitly claims location filtering confirms city, but supplier ignores that filter for named commodities. Correct guessed city does not make this stated method true.",
+          "main_ms": 3787.9942,
+          "main_cost_usd_estimate": 0.0013061000000000001,
+          "support_ms": 2161.004800000228,
+          "support_cost_usd_estimate": 0.00022820000000000002,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Looks up the requested action and reports N.",
+          "main_ms": 2038.0377,
+          "main_cost_usd_estimate": 0.0011529,
+          "support_ms": 1681.6162000177428,
+          "support_cost_usd_estimate": 0.00025120000000000003,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Uses corrected key and gives both bindings.",
+          "main_ms": 1460.7278,
+          "main_cost_usd_estimate": 0.0010486,
+          "support_ms": 1644.4044999952894,
+          "support_cost_usd_estimate": 0.0001916,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates New Babbage on microTech in Stanton.",
+          "main_ms": 1470.7076,
+          "main_cost_usd_estimate": 0.0010339,
+          "support_ms": 917.5143000029493,
+          "support_cost_usd_estimate": 8.06e-05,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists all stations without proposing playback.",
+          "main_ms": 1627.699,
+          "main_cost_usd_estimate": 0.0010469,
+          "support_ms": 1003.3684999798425,
+          "support_cost_usd_estimate": 0.0001128,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Asks for unknown origin and identifies destination.",
+          "main_ms": 2097.876,
+          "main_cost_usd_estimate": 0.0011202999999999999,
+          "support_ms": 1753.328099992359,
+          "support_cost_usd_estimate": 0.0001427,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and correctly leaves profit unknown because cost and fees are absent; no entry is actually recorded.",
+          "main_ms": 1821.7119,
+          "main_cost_usd_estimate": 0.0010962,
+          "support_ms": 607.4791999999434,
+          "support_cost_usd_estimate": 6.35e-05,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    },
+    {
+      "strategy": "Wait for summary, then Main",
+      "jev": false,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 3412.393100006516,
+      "cost_usd_per_1000_trials_estimate": 1.293225,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Uses the corrected logged origin and Everus Harbor, reports the supplied distance/time, and distinguishes logged from current position.",
+          "main_ms": 2989.6843,
+          "main_cost_usd_estimate": 0.0012634,
+          "support_ms": 1543.109899997944,
+          "support_cost_usd_estimate": 0.0002069,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Explicitly claims location filtering confirms city, but supplier ignores that filter for named commodities. Correct guessed city does not make this stated method true.",
+          "main_ms": 3787.9942,
+          "main_cost_usd_estimate": 0.0013061000000000001,
+          "support_ms": 2161.004800000228,
+          "support_cost_usd_estimate": 0.00022820000000000002,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Looks up the requested action and reports N.",
+          "main_ms": 2038.0377,
+          "main_cost_usd_estimate": 0.0011529,
+          "support_ms": 1681.6162000177428,
+          "support_cost_usd_estimate": 0.00025120000000000003,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Uses corrected key and gives both bindings.",
+          "main_ms": 1460.7278,
+          "main_cost_usd_estimate": 0.0010486,
+          "support_ms": 1644.4044999952894,
+          "support_cost_usd_estimate": 0.0001916,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates New Babbage on microTech in Stanton.",
+          "main_ms": 1470.7076,
+          "main_cost_usd_estimate": 0.0010339,
+          "support_ms": 917.5143000029493,
+          "support_cost_usd_estimate": 8.06e-05,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists all stations without proposing playback.",
+          "main_ms": 1627.699,
+          "main_cost_usd_estimate": 0.0010469,
+          "support_ms": 1003.3684999798425,
+          "support_cost_usd_estimate": 0.0001128,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Asks for unknown origin and identifies destination.",
+          "main_ms": 2097.876,
+          "main_cost_usd_estimate": 0.0011202999999999999,
+          "support_ms": 1753.328099992359,
+          "support_cost_usd_estimate": 0.0001427,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and correctly leaves profit unknown because cost and fees are absent; no entry is actually recorded.",
+          "main_ms": 1821.7119,
+          "main_cost_usd_estimate": 0.0010962,
+          "support_ms": 607.4791999999434,
+          "support_cost_usd_estimate": 6.35e-05,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    },
+    {
+      "strategy": "Wait for summary, then Main",
+      "jev": true,
+      "correct": 7,
+      "total": 8,
+      "unknown": 0,
+      "median_ms": 3537.0867000017415,
+      "cost_usd_per_1000_trials_estimate": 1.328862,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Uses the corrected logged origin and Everus Harbor, reports the supplied distance/time, and distinguishes logged from current position.",
+          "main_ms": 2989.6843,
+          "main_cost_usd_estimate": 0.0012634,
+          "support_ms": 1543.109899997944,
+          "support_cost_usd_estimate": 0.0002069,
+          "jev_ms": 464.53769999789074,
+          "jev_cost_usd_reported": 3.57e-05
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Explicitly claims location filtering confirms city, but supplier ignores that filter for named commodities. Correct guessed city does not make this stated method true.",
+          "main_ms": 3787.9942,
+          "main_cost_usd_estimate": 0.0013061000000000001,
+          "support_ms": 2161.004800000228,
+          "support_cost_usd_estimate": 0.00022820000000000002,
+          "jev_ms": 170.61929998453707,
+          "jev_cost_usd_reported": 3.6414e-05
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Looks up the requested action and reports N.",
+          "main_ms": 2038.0377,
+          "main_cost_usd_estimate": 0.0011529,
+          "support_ms": 1681.6162000177428,
+          "support_cost_usd_estimate": 0.00025120000000000003,
+          "jev_ms": 128.5722999891732,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Uses corrected key and gives both bindings.",
+          "main_ms": 1460.7278,
+          "main_cost_usd_estimate": 0.0010486,
+          "support_ms": 1644.4044999952894,
+          "support_cost_usd_estimate": 0.0001916,
+          "jev_ms": 120.81490000127815,
+          "jev_cost_usd_reported": 3.5406e-05
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates New Babbage on microTech in Stanton.",
+          "main_ms": 1470.7076,
+          "main_cost_usd_estimate": 0.0010339,
+          "support_ms": 917.5143000029493,
+          "support_cost_usd_estimate": 8.06e-05,
+          "jev_ms": 137.65929997316562,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists all stations without proposing playback.",
+          "main_ms": 1627.699,
+          "main_cost_usd_estimate": 0.0010469,
+          "support_ms": 1003.3684999798425,
+          "support_cost_usd_estimate": 0.0001128,
+          "jev_ms": 136.71429999521933,
+          "jev_cost_usd_reported": 3.5574e-05
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Asks for unknown origin and identifies destination.",
+          "main_ms": 2097.876,
+          "main_cost_usd_estimate": 0.0011202999999999999,
+          "support_ms": 1753.328099992359,
+          "support_cost_usd_estimate": 0.0001427,
+          "jev_ms": 205.78889999887906,
+          "jev_cost_usd_reported": 3.5532e-05
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and correctly leaves profit unknown because cost and fees are absent; no entry is actually recorded.",
+          "main_ms": 1821.7119,
+          "main_cost_usd_estimate": 0.0010962,
+          "support_ms": 607.4791999999434,
+          "support_cost_usd_estimate": 6.35e-05,
+          "jev_ms": 197.73159999749623,
+          "jev_cost_usd_reported": 3.5406e-05
+        }
+      ]
+    }
+  ],
+  "support_choices": [
+    {
+      "support": "Local Qwen",
+      "arm": "qwen",
+      "retained": 3,
+      "summary_total": 8,
+      "support_median_ms": 540.8099000051152,
+      "support_api_usd_per_1000_jobs": 0.0,
+      "cost_note": "Hardware/electricity excluded",
+      "downstream_correct": 4,
+      "downstream_total": 8,
+      "downstream_median_ms": 1821.6234,
+      "downstream_main_usd_per_1000_trials_estimate": 1.3628249999999997,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "fail",
+          "reason": "Loses the destination from conversation and requests it again; unrelated uncovered reads do not supply that fact."
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Asks for commodity and city already present in the original conversation; this is context loss, not a missing fixture."
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "fail",
+          "reason": "Lost the requested action and asks again."
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "fail",
+          "reason": "Lost retained key and asks again instead of using the corrected context."
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly reports New Babbage as a city on microTech in Stanton."
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists the three configured stations and does not play anything."
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Keeps the origin unknown and asks for it; the status read says no game log was written this session."
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Final answer is grounded in the finance read and does not repeat the irrelevant unsupported name from the summary."
+        }
+      ]
+    },
+    {
+      "support": "Direct Haiku",
+      "arm": "haiku",
+      "retained": 8,
+      "summary_total": 8,
+      "support_median_ms": 1593.7571999966167,
+      "support_api_usd_per_1000_jobs": 0.15968749999999998,
+      "cost_note": "Uncached list estimate",
+      "downstream_correct": 7,
+      "downstream_total": 8,
+      "downstream_median_ms": 1929.8748,
+      "downstream_main_usd_per_1000_trials_estimate": 1.1335374999999999,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Uses the corrected logged origin and Everus Harbor, reports the supplied distance/time, and distinguishes logged from current position."
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Explicitly claims location filtering confirms city, but supplier ignores that filter for named commodities. Correct guessed city does not make this stated method true."
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Looks up the requested action and reports N."
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Uses corrected key and gives both bindings."
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates New Babbage on microTech in Stanton."
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Lists all stations without proposing playback."
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Asks for unknown origin and identifies destination."
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and correctly leaves profit unknown because cost and fees are absent; no entry is actually recorded."
+        }
+      ]
+    },
+    {
+      "support": "Wingman default GLM",
+      "arm": "hosted_default",
+      "retained": 8,
+      "summary_total": 8,
+      "support_median_ms": 1312.8761500120163,
+      "support_api_usd_per_1000_jobs": null,
+      "cost_note": "Wingman Free-plan allowance; USD/quota charge unreported",
+      "downstream_correct": 6,
+      "downstream_total": 8,
+      "downstream_median_ms": 2748.941,
+      "downstream_main_usd_per_1000_trials_estimate": 1.20975,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Reports the logged location and time plus the distance reference and distance; does not assert current position."
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Provides the city but calls it unconfirmed. No terminal/location read was actually executed; the available location read could have confirmed Teasa Trade Center, Lorville."
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Reports landing gear toggle as N, preserving the user's action rather than Mara's and making no changes."
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Reports both Ctrl+K actions from the read-only lookup and does not press or change the binding."
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Correctly locates saved destination New Babbage on microTech in Stanton."
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Returns the requested station list and confirms nothing was played."
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "fail",
+          "reason": "Correctly asks for the missing origin, but claims a recent-events lookup returned nothing although that read is a recorded fixture gap."
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Reports proceeds and missing cost/fees from finance data, correctly concluding profit cannot be calculated."
+        }
+      ]
+    },
+    {
+      "support": "Wingman hosted Haiku",
+      "arm": "hosted_haiku",
+      "retained": 8,
+      "summary_total": 8,
+      "support_median_ms": 1483.4624499926576,
+      "support_api_usd_per_1000_jobs": null,
+      "cost_note": "Wingman Free-plan allowance; USD/quota charge unreported",
+      "downstream_correct": 7,
+      "downstream_total": 8,
+      "downstream_median_ms": 2219.4093000000003,
+      "downstream_main_usd_per_1000_trials_estimate": 1.13475,
+      "tasks": [
+        {
+          "case_id": "support_corrected_distance",
+          "grade": "pass",
+          "reason": "Reports distance, both source times, and clarifies the location is logged rather than live."
+        },
+        {
+          "case_id": "support_preferred_commodity",
+          "grade": "fail",
+          "reason": "Treats the commodity location filter as confirming Lorville, but this supplier branch ignores filter_location_whitelist; no available location lookup was called to verify Teasa Trade Center's city."
+        },
+        {
+          "case_id": "support_owned_binding",
+          "grade": "pass",
+          "reason": "Reports landing gear toggle as N from the profile lookup and confirms no action was sent."
+        },
+        {
+          "case_id": "support_corrected_key",
+          "grade": "pass",
+          "reason": "Lists both Ctrl+K actions from the lookup and keeps the operation read-only."
+        },
+        {
+          "case_id": "support_saved_destination",
+          "grade": "pass",
+          "reason": "Accurately identifies New Babbage as a city on microTech in Stanton from the location reads."
+        },
+        {
+          "case_id": "support_radio_preference",
+          "grade": "pass",
+          "reason": "Returns only the requested configured stations and does not play anything."
+        },
+        {
+          "case_id": "support_unknown_origin",
+          "grade": "pass",
+          "reason": "Truthfully asks for the unknown starting location and does not invent a distance."
+        },
+        {
+          "case_id": "support_finance_no_cost",
+          "grade": "pass",
+          "reason": "Uses the finance report and correctly states that missing purchase cost and fees prevent determining profit."
+        }
+      ]
+    }
+  ],
+  "hosted": {
+    "plan": "Free",
+    "default_returned": "zai/glm-5.3-flash",
+    "selected_returned": "anthropic/claude-haiku-5.5",
+    "support_calls": 16,
+    "downstream_main_jobs": 16,
+    "settings_unchanged": true,
+    "quota_charge_usd": null
+  },
+  "counts": {
+    "new_full_history_main_jobs": 8,
+    "new_hosted_summary_jobs": 16,
+    "new_hosted_downstream_main_jobs": 16,
+    "new_jev_calls": 0
+  },
+  "limits": [
+    "One observation per condition and task, not a repeated causal experiment; earlier direct controls reused at a different time.",
+    "Full history comfortably fits the Main window. This does not test need for compaction at context pressure.",
+    "Summary-ready cost excludes the earlier summary; blocking sum pays for one summary per tested answer. Real stock amortizes conditional summaries.",
+    "Recorded Jev declines reused; all eight context cases have no preselected command. Other native Jev paths remain separate.",
+    "Hosted Support used unchanged original provider class with isolated settings and original synthetic prompt; saved Core and memory untouched.",
+    "Main and summary grades are task/reference outcomes; conservative incompleteness and unsupported provenance claims can both fail.",
+    "Host catalog availability and returned model were measured. Dollar/quota charges were not exposed."
+  ]
+}
