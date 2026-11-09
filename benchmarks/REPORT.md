@@ -1,5 +1,13 @@
 # Wingman provider comparison — 9 November 2026
 
+The graph uses confirmed-correct results out of all 24 tasks. Unknown fixture
+outcomes are labeled separately; they are neither proven wrong nor correct.
+Scorable-only ratios remain in the data. This changes the presentation only,
+not the grades, model calls, latency or costs. This graph measures Waterfall's
+optional first-tool helper; [stock Jev and Main/Support roles](WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.md)
+are a separate experiment.
+
+
 One corrected-fixture follow-up is separate from the frozen chart: SC Radio's
 documented default makes an omitted station offset equivalent to integer zero.
 Luna 5.6 + Jev then listed the frozen stations, waited for the user's choice and
