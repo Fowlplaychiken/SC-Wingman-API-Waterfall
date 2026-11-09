@@ -1,5 +1,9 @@
 # Wingman model roles
 
+See [model placement and hosted baselines](research/WINGMAN-MODEL-PLACEMENT-2026-11-09.md)
+for role-specific recommendations and the remaining comparison gap. The vision
+box describes an image-capable Main model, not an additional stock model.
+
 **Waterfall belongs on the main conversation model.** That model handles the
 conversation, reasoning, tool choices and tool arguments. Improving only the
 support model would not improve those main-model decisions or replace Jev.
