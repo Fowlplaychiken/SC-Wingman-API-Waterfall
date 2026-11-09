@@ -79,6 +79,26 @@ other HTTP 400 errors remain terminal. See [Claude's error reference](https://pl
 
 Unrelated secret saves do not clear exhausted routes. Updating a configured provider's key clears the relevant route state; changing the bridge bearer restarts its owned listener. Provider billing still applies to API calls. There is no promise of free inference or universal protocol support.
 
+## Model benchmarks
+
+[Full report and limits](benchmarks/REPORT.md) · [24-task comparison](benchmarks/WINGMAN-ASSISTANT-BROAD-COMPARISON.png) · [Jev on/off comparison](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
+
+The 9 November 2026 comparison covers eleven model/settings arms. Charts show
+accuracy counts, whole-task time and **USD per 1,000 tasks**, including Jev
+where used. These are AI-reviewed development fixtures with the game closed,
+not a general accuracy guarantee or a native gameplay test. The report includes
+hardware, unknowns, list-price versus reported-cost accounting, and CSV/JSON.
+
+Haiku 5.5 adaptive-low led the 24-task cohort; LFM3 1.7B was the best tested
+local candidate. The separate eight-task paired cohort shows both useful Jev
+tradeoffs and models with no observed benefit. These small sequential samples
+do not establish statistically reliable gains. Recheck new model/version
+candidates with frozen matched tasks before updating recommendations.
+
+Release 0.1.1 supports compatible endpoints. Native Anthropic thinking controls
+and an optional native Jev-per-route setting are **not included yet**; benchmark
+measurements must not be confused with installed feature support.
+
 ## For Wingman maintainers
 
 The reusable routing core is `routing.py`; the optional HTTP adapter is `server.py`; `main.py` binds only public v3 Skill lifecycle and secret interfaces. The installed entry uses a small dependencies wrapper for Wingman's loader. A Core integration can call the router behind the existing LLM interface and omit the loopback adapter, retaining Core's credential and tool-execution ownership.

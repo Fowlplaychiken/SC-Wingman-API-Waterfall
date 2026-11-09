@@ -1,0 +1,23 @@
+model,mode,correct,scorable,accuracy_percent,median_ms,average_cost_usd,jev_average_cost_usd
+Haiku 5.5 · adaptive low,direct,8,8,100.0,1227.7879,0.00064445,0
+Haiku 5.5 · adaptive low,jev,8,8,100.0,1740.4469000026775,0.00020337975,4.587975e-05
+Luna 5.6 · no reasoning (OpenRouter),direct,8,8,100.0,1515.6779999999999,8.693375e-05,0
+Luna 5.6 · no reasoning (OpenRouter),jev,8,8,100.0,1543.5024999940629,0.00012145475,4.587975e-05
+Sonnet 5.5 · adaptive low,direct,8,8,100.0,1792.61605,0.01268375,0
+Sonnet 5.5 · adaptive low,jev,8,8,100.0,2104.4204999930153,0.0025721297500000003,4.587975e-05
+Haiku 5.5 · compatibility default,direct,8,8,100.0,1414.702,0.00066125,0
+Haiku 5.5 · compatibility default,jev,8,8,100.0,1483.8721500026777,0.00019862975,4.587975e-05
+Luna 6 · no reasoning (OpenRouter),direct,8,8,100.0,1324.3497,4.0641875e-05,0
+Luna 6 · no reasoning (OpenRouter),jev,8,8,100.0,1904.3674499940628,8.036725e-05,4.587975e-05
+Haiku 5.5 · adaptive high,direct,8,8,100.0,1267.6849000000002,0.0006825625,0
+Haiku 5.5 · adaptive high,jev,8,8,100.0,1650.660199993015,0.00020556725,4.587975e-05
+Haiku 5.5 · adaptive medium,direct,8,8,100.0,1243.7552999999998,0.0006591375,0
+Haiku 5.5 · adaptive medium,jev,8,8,100.0,1630.2900999930152,0.00020805475,4.587975e-05
+Haiku 5.5 · thinking off,direct,8,8,100.0,1204.44815,0.000637225,0
+Haiku 5.5 · thinking off,jev,8,8,100.0,1517.2865500026776,0.00017397975,4.587975e-05
+LFM3 1.7B · Q4_K_M local,direct,7,8,87.5,1713.4605999999999,0.0,0
+LFM3 1.7B · Q4_K_M local,jev,7,8,87.5,1512.1626499930148,4.587975e-05,4.587975e-05
+Qwen3.5 4B · stock local,direct,7,8,87.5,741.7373,0.0,0
+Qwen3.5 4B · stock local,jev,6,7,85.71428571428571,971.6752999930151,4.587975e-05,4.587975e-05
+Granite 4.1 3B · Q4_K_M local,direct,5,8,62.5,446.03,0.0,0
+Granite 4.1 3B · Q4_K_M local,jev,6,8,75.0,613.5456500016298,4.587975e-05,4.587975e-05

@@ -1,0 +1,12 @@
+label,content_correct,scorable,accuracy_percent,conservative_accuracy_percent,attempts,actual_attempts,counts,completion_p50_ms,completion_p90_ms,average_cost_usd,cost_per_1000_usd,cost_basis
+Haiku 5.5 · adaptive low,24,24,100.0,100.0,24,24,{'pass': 24},2408.71,3562.04,0.0009363166666666667,0.9363166666666667,"uncached official list-price estimate, not a bill"
+Luna 5.6 · no reasoning (OpenRouter),24,24,100.0,100.0,24,24,{'pass': 24},2558.24,4829.43,0.0001931754166666666,0.1931754166666666,"provider-reported usage.cost, including recorded caching"
+Sonnet 5.5 · adaptive low,24,24,100.0,100.0,24,24,{'pass': 24},2891.32,4709.66,0.018210333333333332,18.21033333333333,"uncached official list-price estimate, not a bill"
+Haiku 5.5 · compatibility default,23,24,95.83,95.83,24,24,"{'pass': 23, 'partial': 1}",2459.14,4139.64,0.0010037625000000002,1.0037625000000003,"uncached official list-price estimate, not a bill"
+Luna 6 · no reasoning (OpenRouter),23,24,95.83,95.83,24,24,"{'pass': 23, 'partial': 1}",2484.58,3776.31,7.831020833333335e-05,0.07831020833333335,"provider-reported usage.cost, including recorded caching"
+Haiku 5.5 · adaptive high,23,23,100.0,95.83,24,24,"{'pass': 23, 'unknown': 1}",2632.32,4346.92,0.0010850916666666668,1.0850916666666668,"uncached official list-price estimate, not a bill"
+Haiku 5.5 · adaptive medium,22,22,100.0,91.67,24,24,"{'pass': 22, 'unknown': 2}",2592.25,3929.62,0.0010226999999999999,1.0227,"uncached official list-price estimate, not a bill"
+Haiku 5.5 · thinking off,19,21,90.48,79.17,24,24,"{'pass': 19, 'unknown': 3, 'partial': 2}",2167.61,3102.39,0.0009256958333333333,0.9256958333333333,"uncached official list-price estimate, not a bill"
+LFM3 1.7B · Q4_K_M local,17,22,77.27,70.83,24,24,"{'pass': 17, 'unknown': 2, 'partial': 1, 'fail': 4}",4005.3,12778.72,0.0,0.0,local API fee; excludes hardware and electricity
+Qwen3.5 4B · stock local,15,23,65.22,62.5,24,25,"{'pass': 15, 'unknown': 1, 'partial': 3, 'fail': 5}",1279.47,3637.71,0.0,0.0,local API fee; excludes hardware and electricity
+Granite 4.1 3B · Q4_K_M local,9,24,37.5,37.5,24,25,"{'fail': 13, 'partial': 2, 'pass': 9}",820.72,2093.17,0.0,0.0,local API fee; excludes hardware and electricity
