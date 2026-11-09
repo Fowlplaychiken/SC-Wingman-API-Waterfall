@@ -1,0 +1,29 @@
+module: skills.provider_fallback.main
+name: ProviderFallback
+api_version: 3
+version: 0.1.0
+display_name: Provider fallback
+author: Star Citizen Computer contributors
+description:
+  en: Optional local OpenAI-compatible inference bridge with ordered provider routes.
+hint:
+  en: Configure routes and existing secret names, then start the bridge before selecting its loopback endpoint in Wingman. Provider calls may be billable.
+auto_activate: true
+discoverable_by_default: false
+custom_properties:
+  - id: listen_port
+    name: Loopback port
+    property_type: number
+    value: 4141
+    required: true
+  - id: bridge_secret_name
+    name: Existing bridge bearer secret name
+    property_type: string
+    value: ""
+    required: true
+  - id: routes_json
+    name: Ordered provider routes JSON
+    hint: JSON array of route_id, endpoint, model, optional secret_name, request_overrides and final_local.
+    property_type: string
+    value: "[]"
+    required: true

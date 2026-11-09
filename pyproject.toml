@@ -1,0 +1,14 @@
+[project]
+name = "wingman-api-waterfall"
+version = "0.1.0"
+description = "Optional Wingman OpenAI-compatible provider waterfall skill"
+requires-python = ">=3.11"
+license = {text = "GPL-3.0-or-later"}
+dependencies = ["httpx", "fastapi", "uvicorn"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
