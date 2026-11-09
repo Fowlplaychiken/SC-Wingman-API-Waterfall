@@ -1,5 +1,7 @@
 # Wingman API Waterfall
 
+**Targets the Main conversation model**: reasoning, tool choices and answers. Support/background tasks, Jev, embeddings and speech have separate settings. [See the stock flow and optional Waterfall flow](docs/MODEL-ROLES.md).
+
 ![Wingman v3 skill](https://img.shields.io/badge/Wingman-v3_skill-41b9c7)
 ![Python 3.11 or newer](https://img.shields.io/badge/Python-3.11%2B-3776ab)
 ![GPL 3.0 or later](https://img.shields.io/badge/License-GPL--3.0--or--later-a6c76d)
