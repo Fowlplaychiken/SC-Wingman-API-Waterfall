@@ -1,358 +1,616 @@
 {
-  "schema_version": 1,
-  "title": "Wingman: does an extra Jev tool-selection step help?",
-  "date": "2026-11-09",
-  "cases_per_arm": 8,
+  "cases_per_arm": 24,
   "rows": [
     {
-      "id": "haiku-adaptive-low",
-      "label": "Haiku 5.5 \u00b7 adaptive low",
+      "id": "haiku-low",
+      "label": "Claude Haiku 5.5 adaptive low",
+      "settings": "Claude Haiku 5.5 adaptive low",
       "direct": {
-        "correct": 8,
-        "scorable": 8,
+        "complete_correct_over_24": 0.8333333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 20,
+        "scorable": 22,
         "counts": {
-          "pass": 8
+          "pass": 20,
+          "unknown": 2,
+          "partial": 2
         },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1227.7879,
-        "p90_ms": 2957.1414,
-        "average_cost_usd": 0.00064445,
-        "jev_average_cost_usd": 0
+        "median_ms": 2909.85955,
+        "p90_ms": 4885.19952,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0009715875,
+        "average_cost_lower_bound_usd": 0.0009715875,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       },
       "jev": {
-        "correct": 8,
-        "scorable": 8,
+        "complete_correct_over_24": 0.7916666666666666,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 19,
+        "scorable": 22,
         "counts": {
-          "pass": 8
+          "pass": 19,
+          "partial": 3,
+          "unknown": 2
         },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1740.4469000026775,
-        "p90_ms": 3398.4112000032596,
-        "average_cost_usd": 0.00020337975,
-        "jev_average_cost_usd": 4.587975e-05
+        "median_ms": 2986.1821,
+        "p90_ms": 4674.3595399999995,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0007589674999999999,
+        "average_cost_lower_bound_usd": 0.0007589674999999999,
+        "jev_average_cost_usd": 4.7967500000000004e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       }
     },
     {
-      "id": "openrouter-luna5.6-none",
-      "label": "Luna 5.6 \u00b7 no reasoning (OpenRouter)",
+      "id": "haiku-medium",
+      "label": "Claude Haiku 5.5 adaptive medium",
+      "settings": "Claude Haiku 5.5 adaptive medium",
       "direct": {
-        "correct": 8,
-        "scorable": 8,
+        "complete_correct_over_24": 0.8333333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 20,
+        "scorable": 23,
         "counts": {
-          "pass": 8
+          "pass": 20,
+          "partial": 3,
+          "unknown": 1
         },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1515.6779999999999,
-        "p90_ms": 2596.5215,
-        "average_cost_usd": 8.693375e-05,
-        "jev_average_cost_usd": 0
+        "median_ms": 3078.16565,
+        "p90_ms": 3788.40535,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0009633875000000001,
+        "average_cost_lower_bound_usd": 0.0009633875000000001,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       },
       "jev": {
-        "correct": 8,
-        "scorable": 8,
+        "complete_correct_over_24": 0.875,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 21,
+        "scorable": 22,
         "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1543.5024999940629,
-        "p90_ms": 2189.6389999860303,
-        "average_cost_usd": 0.00012145475,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "sonnet-adaptive-low",
-      "label": "Sonnet 5.5 \u00b7 adaptive low",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1792.61605,
-        "p90_ms": 3433.4034,
-        "average_cost_usd": 0.01268375,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 2104.4204999930153,
-        "p90_ms": 3804.8424000032596,
-        "average_cost_usd": 0.0025721297500000003,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "haiku-compatible-default",
-      "label": "Haiku 5.5 \u00b7 compatibility default",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1414.702,
-        "p90_ms": 3195.021,
-        "average_cost_usd": 0.00066125,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1483.8721500026777,
-        "p90_ms": 3359.7567,
-        "average_cost_usd": 0.00019862975,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "openrouter-luna6-none",
-      "label": "Luna 6 \u00b7 no reasoning (OpenRouter)",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1324.3497,
-        "p90_ms": 2351.992,
-        "average_cost_usd": 4.0641875e-05,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1904.3674499940628,
-        "p90_ms": 3064.4707000032595,
-        "average_cost_usd": 8.036725e-05,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "haiku-adaptive-high",
-      "label": "Haiku 5.5 \u00b7 adaptive high",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1267.6849000000002,
-        "p90_ms": 4346.9177,
-        "average_cost_usd": 0.0006825625,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1650.660199993015,
-        "p90_ms": 3837.1321,
-        "average_cost_usd": 0.00020556725,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "haiku-adaptive-medium",
-      "label": "Haiku 5.5 \u00b7 adaptive medium",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1243.7552999999998,
-        "p90_ms": 2935.1346,
-        "average_cost_usd": 0.0006591375,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1630.2900999930152,
-        "p90_ms": 3960.80810000326,
-        "average_cost_usd": 0.00020805475,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "haiku-disabled-low",
-      "label": "Haiku 5.5 \u00b7 thinking off",
-      "direct": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1204.44815,
-        "p90_ms": 2166.4654,
-        "average_cost_usd": 0.000637225,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 8,
-        "scorable": 8,
-        "counts": {
-          "pass": 8
-        },
-        "accuracy_percent": 100.0,
-        "conservative_accuracy_percent": 100.0,
-        "median_ms": 1517.2865500026776,
-        "p90_ms": 2447.9866,
-        "average_cost_usd": 0.00017397975,
-        "jev_average_cost_usd": 4.587975e-05
-      }
-    },
-    {
-      "id": "local-lfm3-1.7b",
-      "label": "LFM3 1.7B \u00b7 Q4_K_M local",
-      "direct": {
-        "correct": 7,
-        "scorable": 8,
-        "counts": {
-          "pass": 7,
-          "fail": 1
-        },
-        "accuracy_percent": 87.5,
-        "conservative_accuracy_percent": 87.5,
-        "median_ms": 1713.4605999999999,
-        "p90_ms": 7165.2957,
-        "average_cost_usd": 0.0,
-        "jev_average_cost_usd": 0
-      },
-      "jev": {
-        "correct": 7,
-        "scorable": 8,
-        "counts": {
-          "pass": 7,
+          "pass": 21,
+          "unknown": 2,
           "partial": 1
         },
-        "accuracy_percent": 87.5,
-        "conservative_accuracy_percent": 87.5,
-        "median_ms": 1512.1626499930148,
-        "p90_ms": 3762.7097,
-        "average_cost_usd": 4.587975e-05,
-        "jev_average_cost_usd": 4.587975e-05
+        "median_ms": 3222.9434499999998,
+        "p90_ms": 4385.39237,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.00080455675,
+        "average_cost_lower_bound_usd": 0.00080455675,
+        "jev_average_cost_usd": 4.7969250000000005e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       }
     },
     {
-      "id": "local-qwen4b",
-      "label": "Qwen3.5 4B \u00b7 stock local",
+      "id": "haiku-high",
+      "label": "Claude Haiku 5.5 adaptive high",
+      "settings": "Claude Haiku 5.5 adaptive high",
       "direct": {
-        "correct": 7,
-        "scorable": 8,
+        "complete_correct_over_24": 0.75,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 18,
+        "scorable": 20,
         "counts": {
-          "pass": 7,
-          "fail": 1
+          "partial": 2,
+          "pass": 18,
+          "unknown": 4
         },
-        "accuracy_percent": 87.5,
-        "conservative_accuracy_percent": 87.5,
-        "median_ms": 741.7373,
-        "p90_ms": 3637.7141,
-        "average_cost_usd": 0.0,
-        "jev_average_cost_usd": 0
+        "median_ms": 3168.6495,
+        "p90_ms": 4533.191949999999,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0010818958333333334,
+        "average_cost_lower_bound_usd": 0.0010818958333333334,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       },
       "jev": {
-        "correct": 6,
-        "scorable": 7,
+        "complete_correct_over_24": 0.8333333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 20,
+        "scorable": 21,
         "counts": {
-          "pass": 6,
-          "unknown": 1,
-          "fail": 1
+          "pass": 20,
+          "unknown": 3,
+          "partial": 1
         },
-        "accuracy_percent": 85.71428571428571,
-        "conservative_accuracy_percent": 75.0,
-        "median_ms": 971.6752999930151,
-        "p90_ms": 2117.1792,
-        "average_cost_usd": 4.587975e-05,
-        "jev_average_cost_usd": 4.587975e-05
+        "median_ms": 3600.0948,
+        "p90_ms": 4939.47622,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0008308769166666666,
+        "average_cost_lower_bound_usd": 0.0008308769166666666,
+        "jev_average_cost_usd": 4.7972750000000006e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       }
     },
     {
-      "id": "local-granite4.1-3b",
-      "label": "Granite 4.1 3B \u00b7 Q4_K_M local",
+      "id": "haiku-off",
+      "label": "Claude Haiku 5.5 thinking off",
+      "settings": "Claude Haiku 5.5 thinking off",
       "direct": {
-        "correct": 5,
-        "scorable": 8,
+        "complete_correct_over_24": 0.7083333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 17,
+        "scorable": 21,
         "counts": {
-          "pass": 5,
-          "fail": 3
+          "unknown": 3,
+          "pass": 17,
+          "partial": 3,
+          "fail": 1
         },
-        "accuracy_percent": 62.5,
-        "conservative_accuracy_percent": 62.5,
-        "median_ms": 446.03,
-        "p90_ms": 1158.7954,
-        "average_cost_usd": 0.0,
-        "jev_average_cost_usd": 0
+        "median_ms": 2530.04665,
+        "p90_ms": 3449.0200099999997,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.00090405,
+        "average_cost_lower_bound_usd": 0.00090405,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       },
       "jev": {
-        "correct": 6,
-        "scorable": 8,
+        "complete_correct_over_24": 0.7083333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 17,
+        "scorable": 22,
         "counts": {
-          "pass": 6,
-          "fail": 2
+          "pass": 17,
+          "partial": 4,
+          "unknown": 2,
+          "fail": 1
         },
-        "accuracy_percent": 75.0,
-        "conservative_accuracy_percent": 75.0,
-        "median_ms": 613.5456500016298,
-        "p90_ms": 2608.4717,
-        "average_cost_usd": 4.587975e-05,
-        "jev_average_cost_usd": 4.587975e-05
+        "median_ms": 2718.34685,
+        "p90_ms": 4076.8796099999995,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0007111466666666666,
+        "average_cost_lower_bound_usd": 0.0007111466666666666,
+        "jev_average_cost_usd": 4.7967500000000004e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      }
+    },
+    {
+      "id": "haiku-compatible",
+      "label": "Claude Haiku 5.5 compatible default",
+      "settings": "Claude Haiku 5.5 compatible default",
+      "direct": {
+        "complete_correct_over_24": 0.9166666666666666,
+        "uncached_token_estimate_usd": 0.0010483166666666666,
+        "uncached_estimate_complete_tasks": 24,
+        "correct": 22,
+        "scorable": 22,
+        "counts": {
+          "pass": 22,
+          "unknown": 2
+        },
+        "median_ms": 2849.26085,
+        "p90_ms": 4872.475009999999,
+        "timed_tasks": 24,
+        "average_cost_usd": null,
+        "average_cost_lower_bound_usd": 0.0,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 24,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 0
+      },
+      "jev": {
+        "complete_correct_over_24": 0.875,
+        "uncached_token_estimate_usd": 0.0007961625000000001,
+        "uncached_estimate_complete_tasks": 24,
+        "correct": 21,
+        "scorable": 22,
+        "counts": {
+          "pass": 21,
+          "unknown": 2,
+          "partial": 1
+        },
+        "median_ms": 3292.7275,
+        "p90_ms": 5532.20307,
+        "timed_tasks": 24,
+        "average_cost_usd": null,
+        "average_cost_lower_bound_usd": 4.7969250000000005e-05,
+        "jev_average_cost_usd": 4.7969250000000005e-05,
+        "cost_unknown_tasks": 24,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 0
+      }
+    },
+    {
+      "id": "sonnet-low",
+      "label": "Claude Sonnet 5.5 adaptive low",
+      "settings": "Claude Sonnet 5.5 adaptive low",
+      "direct": {
+        "complete_correct_over_24": 0.875,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 21,
+        "scorable": 23,
+        "counts": {
+          "pass": 21,
+          "partial": 2,
+          "unknown": 1
+        },
+        "median_ms": 3031.51705,
+        "p90_ms": 4365.08427,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0181615,
+        "average_cost_lower_bound_usd": 0.0181615,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      },
+      "jev": {
+        "complete_correct_over_24": 0.9583333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 23,
+        "scorable": 23,
+        "counts": {
+          "pass": 23,
+          "unknown": 1
+        },
+        "median_ms": 3529.0021500000003,
+        "p90_ms": 4635.74454,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.013017219250000002,
+        "average_cost_lower_bound_usd": 0.013017219250000002,
+        "jev_average_cost_usd": 4.7969250000000005e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      }
+    },
+    {
+      "id": "luna6",
+      "label": "GPT 6 Luna via OpenRouter",
+      "settings": "GPT 6 Luna via OpenRouter",
+      "direct": {
+        "complete_correct_over_24": 0.8333333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 20,
+        "scorable": 24,
+        "counts": {
+          "pass": 20,
+          "partial": 3,
+          "fail": 1
+        },
+        "median_ms": 2603.2165,
+        "p90_ms": 3790.84098,
+        "timed_tasks": 24,
+        "average_cost_usd": 7.190104166666667e-05,
+        "average_cost_lower_bound_usd": 7.190104166666667e-05,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      },
+      "jev": {
+        "complete_correct_over_24": 0.75,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 18,
+        "scorable": 23,
+        "counts": {
+          "pass": 18,
+          "partial": 5,
+          "unknown": 1
+        },
+        "median_ms": 2641.3816500000003,
+        "p90_ms": 3992.8528799999995,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.00010397991666666669,
+        "average_cost_lower_bound_usd": 0.00010397991666666669,
+        "jev_average_cost_usd": 4.7965750000000004e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      }
+    },
+    {
+      "id": "luna5.6",
+      "label": "GPT 5.6 Luna via OpenRouter",
+      "settings": "GPT 5.6 Luna via OpenRouter",
+      "direct": {
+        "complete_correct_over_24": 0.8333333333333334,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 20,
+        "scorable": 24,
+        "counts": {
+          "pass": 20,
+          "partial": 4
+        },
+        "median_ms": 2588.65315,
+        "p90_ms": 4031.1604399999997,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.00016756166666666666,
+        "average_cost_lower_bound_usd": 0.00016756166666666666,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      },
+      "jev": {
+        "complete_correct_over_24": 0.75,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 18,
+        "scorable": 22,
+        "counts": {
+          "pass": 18,
+          "unknown": 2,
+          "partial": 4
+        },
+        "median_ms": 2703.26665,
+        "p90_ms": 4441.15052,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0001916173333333334,
+        "average_cost_lower_bound_usd": 0.0001916173333333334,
+        "jev_average_cost_usd": 4.7972750000000006e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      }
+    },
+    {
+      "id": "lfm3",
+      "label": "LFM3 1.7B Q4_K_M local",
+      "settings": "LFM3 1.7B Q4_K_M local",
+      "direct": {
+        "complete_correct_over_24": 0.375,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 9,
+        "scorable": 19,
+        "counts": {
+          "unknown": 5,
+          "partial": 5,
+          "pass": 9,
+          "fail": 5
+        },
+        "median_ms": 5126.88255,
+        "p90_ms": 11854.287190000001,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0,
+        "average_cost_lower_bound_usd": 0.0,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      },
+      "jev": {
+        "complete_correct_over_24": 0.4583333333333333,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 11,
+        "scorable": 18,
+        "counts": {
+          "pass": 11,
+          "fail": 2,
+          "unknown": 6,
+          "partial": 5
+        },
+        "median_ms": 4135.24415,
+        "p90_ms": 11669.6467,
+        "timed_tasks": 24,
+        "average_cost_usd": 4.7995500000000005e-05,
+        "average_cost_lower_bound_usd": 4.7995500000000005e-05,
+        "jev_average_cost_usd": 4.7995500000000005e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      }
+    },
+    {
+      "id": "qwen4b",
+      "label": "Qwen 3.5 4B local",
+      "settings": "Qwen 3.5 4B local",
+      "direct": {
+        "complete_correct_over_24": 0.375,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 9,
+        "scorable": 20,
+        "counts": {
+          "fail": 5,
+          "pass": 9,
+          "partial": 6,
+          "unknown": 4
+        },
+        "median_ms": 1484.11835,
+        "p90_ms": 2919.5039099999995,
+        "timed_tasks": 24,
+        "average_cost_usd": 0.0,
+        "average_cost_lower_bound_usd": 0.0,
+        "jev_average_cost_usd": 0.0,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
+      },
+      "jev": {
+        "complete_correct_over_24": 0.4583333333333333,
+        "uncached_token_estimate_usd": null,
+        "uncached_estimate_complete_tasks": 0,
+        "correct": 11,
+        "scorable": 19,
+        "counts": {
+          "pass": 11,
+          "partial": 4,
+          "fail": 4,
+          "unknown": 5
+        },
+        "median_ms": 2019.2445500000001,
+        "p90_ms": 5854.47438,
+        "timed_tasks": 24,
+        "average_cost_usd": 4.796225000000001e-05,
+        "average_cost_lower_bound_usd": 4.796225000000001e-05,
+        "jev_average_cost_usd": 4.796225000000001e-05,
+        "cost_unknown_tasks": 0,
+        "jev_cost_unknown_tasks": 0,
+        "main_cost_known_tasks": 24
       }
     }
   ],
-  "scope": "Same eight single-tool tasks per arm. Direct results reused from broader cohort; assisted main-model runs measured separately. Eight frozen, measured Jev choices/times/costs reused for every assisted arm. Not fresh native Wingman Jev timing.",
-  "limits": [
-    "Small AI-reviewed development subset; not all assistant requests, gameplay, a production-ready preselector or a proof of significance.",
-    "Composition includes measured Jev round trip plus each measured main-model whole tool loop. Latency cohorts were collected sequentially, not randomized/interleaved A/B trials.",
-    "The eight Jev calls were billed once; per-arm assisted cost represents the hypothetical price of running that pipeline once per task, not nine extra Jev invoices.",
-    "Native provider metadata is not exposed by the public facade; these old-client results remain version-bound experimental evidence.",
-    "Costs include all model turns. Direct Claude values are uncached list-price estimates; OpenRouter values use usage.cost. Local API fee excludes hardware/electricity.",
-    "Two source-equivalent explicit-key follow-ups replaced only medium/high assisted binding answers; originals/cost overhead remain in private custody."
-  ],
-  "hardware": "Legacy RTX 2080 Ti 11 GiB, i7-10700K, 32 GiB; local Q4_K_M candidates, llama.cpp b12177, context16384, CPUthreads4, stock Qwen service resident.",
-  "jev_version": "typesafe/jev-1.14-20261014",
-  "jev_mean_cost_usd": 4.587975e-05,
-  "jev_source_sha256": "8db83c10774cfd940ebb482d20d7700dbb371dad60517a464e3d5dd7492d7f26"
+  "protocol": {
+    "grades": "parent-review.json",
+    "maps": "blind*/root-only-map.json",
+    "fresh_responses": 384,
+    "reused_direct_responses": 96,
+    "time": "completion_ms includes router and Jev; no extra Jev time added",
+    "cost": "All main turns plus Jev when known; null means unknown. Local API fee excludes hardware. Claude estimates use uncached input/output list rates; OpenRouter provider-reported cost. Zero/missing Jev charge treated unknown.",
+    "limit": "Exposed development fixture; unknowns excluded from scorable denominator. No causal or native integration claim. Granite historical unpaired excluded.",
+    "hardware": "RTX 2080 Ti 11 GiB, Intel i7-10700K, 32 GiB RAM; local Q4 models; llama.cpp b12177, context 16384."
+  },
+  "uncached_estimate_note": "Hypothetical Haiku-compatible list-price calculation from recorded prompt/completion tokens, without cache adjustment; not billed cost or a documented upper bound.",
+  "additional_root_sample": "root-sample-ids.json: 10 of 10 sampled judge-only passes confirmed; kept separate from original review categories.",
+  "independent_review_counts": {
+    "reviewed_missing_judge": 72,
+    "reviewed_override": 18,
+    "reviewed": 91,
+    "judge_pass_not_individually_reviewed": 203,
+    "reviewed_random_pass_sample": 80,
+    "judge_pass_fixture_gap_policy": 16
+  },
+  "common_scorable_comparisons": {
+    "local_assisted": {
+      "common_scorable_n": 16,
+      "correct": {
+        "lfm3:jev": 10,
+        "qwen4b:jev": 10
+      },
+      "differing_cases": {
+        "binding_reverse": {
+          "lfm3:jev": "partial",
+          "qwen4b:jev": "fail"
+        },
+        "find_location": {
+          "lfm3:jev": "pass",
+          "qwen4b:jev": "partial"
+        },
+        "waypoint_distance": {
+          "lfm3:jev": "partial",
+          "qwen4b:jev": "pass"
+        }
+      },
+      "possible_correct_range_all_24": {
+        "lfm3:jev": {
+          "minimum": 11,
+          "maximum": 17,
+          "denominator": 24
+        },
+        "qwen4b:jev": {
+          "minimum": 11,
+          "maximum": 16,
+          "denominator": 24
+        }
+      }
+    },
+    "local_direct": {
+      "common_scorable_n": 17,
+      "correct": {
+        "lfm3:direct": 8,
+        "qwen4b:direct": 9
+      },
+      "differing_cases": {
+        "binding_forward_reverse": {
+          "lfm3:direct": "partial",
+          "qwen4b:direct": "pass"
+        },
+        "chatter_status": {
+          "lfm3:direct": "pass",
+          "qwen4b:direct": "fail"
+        },
+        "hullc_laranite_trade_plan": {
+          "lfm3:direct": "fail",
+          "qwen4b:direct": "partial"
+        },
+        "provider_status": {
+          "lfm3:direct": "partial",
+          "qwen4b:direct": "pass"
+        },
+        "unknown_origin": {
+          "lfm3:direct": "fail",
+          "qwen4b:direct": "partial"
+        }
+      },
+      "possible_correct_range_all_24": {
+        "lfm3:direct": {
+          "minimum": 9,
+          "maximum": 14,
+          "denominator": 24
+        },
+        "qwen4b:direct": {
+          "minimum": 9,
+          "maximum": 13,
+          "denominator": 24
+        }
+      }
+    },
+    "hosted": {
+      "common_scorable_n": 20,
+      "correct": {
+        "haiku-compatible:direct": 20,
+        "sonnet-low:jev": 20,
+        "haiku-low:direct": 18
+      },
+      "differing_cases": {
+        "hullc_laranite_trade_plan": {
+          "haiku-compatible:direct": "pass",
+          "sonnet-low:jev": "pass",
+          "haiku-low:direct": "partial"
+        },
+        "waypoint_distance": {
+          "haiku-compatible:direct": "pass",
+          "sonnet-low:jev": "pass",
+          "haiku-low:direct": "partial"
+        }
+      },
+      "possible_correct_range_all_24": {
+        "haiku-compatible:direct": {
+          "minimum": 22,
+          "maximum": 24,
+          "denominator": 24
+        },
+        "sonnet-low:jev": {
+          "minimum": 23,
+          "maximum": 24,
+          "denominator": 24
+        },
+        "haiku-low:direct": {
+          "minimum": 20,
+          "maximum": 22,
+          "denominator": 24
+        }
+      }
+    }
+  },
+  "schema_version": 2,
+  "title": "Wingman · 24-task model comparison",
+  "date": "2026-11-09",
+  "method_note": "24 tasks per condition · 10 model/settings arms · 480 task-runs. Accuracy excludes ? fixture unknowns; partial answers are not fully correct. AI-reference grading with independent review/sample, not gameplay qualification. Median whole-task time includes Jev; some controls reused; small-sample differences are not statistically established. Costs are USD per 1,000 tasks: Claude token/list estimates, OpenRouter reported charges. * Haiku-compatible is an uncached token estimate; cache breakdown and actual bill are unknown. Local $0 excludes electricity/hardware. RTX 2080 Ti 11 GiB · i7-10700K · 32 GiB RAM · local Q4_K_M · llama.cpp b12177 · 16K context · 4 CPU threads; stock Qwen resident. Engineering/combat evaluated separately.",
+  "source_aggregate_sha256": "e456178112fee6bb74e69095b1868532095d1cc71e008c392b24b296d6085884"
 }

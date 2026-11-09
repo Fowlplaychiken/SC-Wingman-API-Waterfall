@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import re
 import socket
 import threading
 import time
@@ -13,6 +14,7 @@ from api.enums import WingmanInitializationErrorType
 from api.interface import WingmanInitializationError
 from skills.skill_base import Skill, tool
 
+from .jev_assist import NativeJevAssist
 from .routing import ProviderWaterfall, RouteSpec
 from .server import create_app
 
@@ -96,6 +98,8 @@ class ProviderFallback(Skill):
         self._keys = {}
         self._secret_hashes = {}
         self._bridge_name = None
+        self._event_generation = 0
+        self._core_loop = None
 
     def _settings(self, errors):
         port = self.retrieve_custom_property_value("listen_port", errors)
@@ -108,7 +112,25 @@ class ProviderFallback(Skill):
         raw = json.loads(routes)
         if type(raw) is not list or not raw:
             raise ValueError("missing routes")
-        specs = [RouteSpec(**route) for route in raw]
+        properties = {p.id: p.value for p in self.config.custom_properties}
+        mode = properties.get("fallback_mode", "availability")
+        notifications = properties.get("notify_switches", True)
+        presets = {
+            "credits_only": ("credit_exhausted",),
+            "availability": (
+                "credit_exhausted",
+                "authentication_or_model_unavailable",
+                "temporary_unavailable",
+                "connection_unavailable",
+            ),
+            "manual": (),
+        }
+        if mode not in presets or type(notifications) is not bool:
+            raise ValueError("invalid fallback settings")
+        specs = [
+            RouteSpec(**{**route, "fallback_on": route.get("fallback_on", presets[mode])})
+            for route in raw
+        ]
         return port, bridge_name, specs
 
     async def validate(self):
@@ -125,7 +147,62 @@ class ProviderFallback(Skill):
             )
         return errors
 
+    def _on_event(self, event, generation, router):
+        loop = self._core_loop
+        if loop is None or loop.is_closed():
+            raise RuntimeError("notification_loop_unavailable")
+        loop.call_soon_threadsafe(self._log_event, event, generation, router)
+
+    def _log_event(self, event, generation, router):
+        if generation != self._event_generation or self.is_unloaded:
+            return
+        try:
+            # Restrict untrusted configured labels before displaying them.
+            def safe(value):
+                if isinstance(value, str) and any(
+                    isinstance(secret, str) and secret and secret in value
+                    for secret in self._keys.values()
+                ):
+                    return "redacted"
+                if isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9_./:+~-]{1,160}", value):
+                    return value
+                return "unknown"
+
+            kind = event.get("kind")
+            route = safe(event.get("route_id"))
+            model = safe(event.get("model"))
+            if kind == "failure":
+                reason = event.get("reason")
+                status = event.get("http_status")
+                facts = {
+                    "route_id": route,
+                    "model": model,
+                    "reason": safe(reason),
+                    "http_status": status if type(status) is int and 100 <= status <= 599 else None,
+                    "request_id": safe(event.get("request_id")),
+                    "provider_request_id": safe(event.get("provider_request_id")),
+                }
+                self.log.warning("Provider route failure: " + json.dumps(facts), server_only=True)
+            elif kind == "selection":
+                properties = {p.id: p.value for p in self.config.custom_properties}
+                if not properties.get("notify_switches", True):
+                    return
+                if event.get("fallback"):
+                    self.log.warning(
+                        f"Using fallback {route} (configured model {model}); "
+                        "capability and cost may change."
+                    )
+                elif event.get("previous_route_id"):
+                    self.log.info(f"Primary route restored: {route} (configured model {model}).")
+                else:
+                    self.log.info(f"Primary route selected: {route} (configured model {model}).")
+        except Exception:
+            marker = getattr(router, "note_notification_failed", None)
+            if marker:
+                marker()
+
     async def _stop(self):
+        self._event_generation += 1
         if self._server is not None:
             if (
                 await asyncio.to_thread(self._server.stop) is not True
@@ -157,12 +234,22 @@ class ProviderFallback(Skill):
         async def resolve(name):
             return self._keys.get(name)
 
-        self._router = ProviderWaterfall(tuple(specs), resolve)
+        self._event_generation += 1
+        generation = self._event_generation
+        holder = {}
+        self._router = ProviderWaterfall(
+            tuple(specs),
+            resolve,
+            assistance=NativeJevAssist(getattr(self.wingman, "system_one", None)),
+            on_event=lambda event: self._on_event(event, generation, holder["router"]),
+        )
+        holder["router"] = self._router
         self._server = OwnedServer(create_app(self._router, bridge_key), port)
         await asyncio.to_thread(self._server.start)
 
     async def prepare(self):
         async with self._lock:
+            self._core_loop = asyncio.get_running_loop()
             if self.is_unloaded:
                 raise RuntimeError("provider_bridge_unloaded")
             if not self._subscribed:
