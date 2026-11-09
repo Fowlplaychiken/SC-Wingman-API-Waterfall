@@ -1,12 +1,22 @@
 # Wingman API Waterfall
 
-**Targets the Main conversation model**: reasoning, tool choices and answers. Support/background tasks, Jev, embeddings and speech have separate settings. [See the stock flow and optional Waterfall flow](docs/MODEL-ROLES.md).
+**This routes Wingman's main conversation model:** the model that reasons,
+chooses tools and answers. Version 0.3 also adds a separate, optional Support
+chain for requests Core already schedules, such as conversation summaries. Main
+and Support keep independent provider chains and credential references. Core
+continues to own when summarization runs and how its results affect memory; this
+skill does not schedule summaries or change memory policy. The separate Jev
+decision provider and speech keep their existing settings. Core couples remote
+Support mode with a separate remote embedding endpoint; preserve your embedding
+model and endpoint when changing that mode so existing memory stays compatible. Optional
+per-route Jev assistance uses Wingman's decision interface, not the Support
+chain. See the [model-role map](docs/MODEL-ROLES.md).
 
 ![Wingman v3 skill](https://img.shields.io/badge/Wingman-v3_skill-41b9c7)
 ![Python 3.11 or newer](https://img.shields.io/badge/Python-3.11%2B-3776ab)
 ![GPL 3.0 or later](https://img.shields.io/badge/License-GPL--3.0--or--later-a6c76d)
 
-**Use your preferred AI first. Keep another provider or a local model ready as fallback.**
+**Install without changing Wingman. Configure a provider order only if you want automatic fallback.**
 
 ```text
 Your voice or text → Wingman → API Waterfall → your first available model
@@ -15,34 +25,129 @@ Your voice or text → Wingman → API Waterfall → your first available model
                                 3. Local / second-computer model (optional)
 ```
 
-This optional Wingman v3 skill runs a bearer-protected endpoint on your own computer. It forwards conversations, images and tool calls through the providers **you configure, in your order**. Wingman continues to execute its tools. There are no Core patches, model downloads, subscriptions, bundled credentials or other-project services.
+When you explicitly enable Main, this optional Wingman v3 skill runs its bearer-protected Main endpoint on your computer. It forwards conversations, images and tool calls through the providers **you configure, in your order**. The independent Support listener starts only when Support is separately enabled. Wingman continues to execute its tools. There are no Core patches, model downloads, bundled credentials or other-project services.
 
-Version 0.2 source has focused routing and owned-listener checks; native 0.2 installation and activation are not established. Earlier routing and owned-listener checks pass. Actual Claude-compatible completion, model discovery and a controlled credit failure followed by real local inference have been checked. On 9 November 2026, the installed skill served an original Wingman Starbuck conversation and a read-only status-tool round trip through direct Claude Haiku. A separate controlled first-route credit failure selected a real second OpenAI API. These checks do not establish every provider/model combination or in-game behavior.
+## Quick setup
+
+[Download the skill ZIP](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall/releases/latest) · [Source](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall)
+
+1. Back up your Wingman profile/settings and keep the previous skill ZIP for rollback.
+2. Install `provider_fallback-0.3.0.zip` into `custom_skills` and restart Wingman so its skill catalogue sees the package.
+3. A fresh install leaves **Main and Support disabled**. No new endpoint or key is needed unless you choose a route.
+4. To use Main, configure its ordered route list and secret references, set `main_enabled: true`, then select Main's local-compatible endpoint (`http://127.0.0.1:4141/v1`, model `waterfall`) in Core. Set `bridge_secret_name` to `local_llm`; put a strong local bridge password in Wingman Secrets under that name. This is a local password, not a provider API key.
+5. To use Support, configure its separate ordered routes and set `support_enabled: true`. Point Core's existing Support provider at `http://127.0.0.1:4142/v1` with model `local-model`; Core supplies the fixed local auth internally. Do not copy the Main bearer or enter a separate Support key.
+6. Apply the settings and use **Provider fallback status** for a read-only check of the Main route. Support has no status/reset/admin endpoint on its listener.
+
+Wingman's `local_llm` secret is shared across its Wingmen. Before changing it,
+check whether another profile needs a different authenticated gateway key.
+
+```mermaid
+flowchart LR
+    U[Conversation] --> M[Main Waterfall<br/>4141<br/>independent routes]
+    M --> A[Preferred model]
+    M --> B[Fallback model]
+    C[Wingman Core scheduler] -->|when Core requests Support| S[Support listener<br/>4142<br/>independent routes]
+    S --> H[Support provider]
+    S --> L[Local Support model]
+    J[Optional Jev assistance] -. Main routes only .-> M
+```
+
+Core owns when Support runs and how summaries enter its memory policy. Main
+answers and Support summaries use independent route lists and credential
+references. Jev assistance is optional on Main routes only; Support cannot call
+it. For a worked role overview, see the [model-role map](docs/MODEL-ROLES.md).
 
 ## What it does
 
-- Accepts any number of ordered compatible provider/model entries; there is no fixed station-style count limit.
+- Accepts any number of ordered compatible provider/model entries; there is no fixed provider-count limit.
 - Skips a provider after a definite credit-exhaustion response, including on later requests. It stays skipped until you reset it, update that credential, reconfigure or restart the skill.
 - Provides three fallback modes: `credits_only` (recommended for new profiles), `availability`, and `manual`. Existing profiles without this setting retain `availability`; a route’s explicit `fallback_on` list overrides the preset. Rate limits and service unavailability are temporary rather than automatically called spent credits.
-- Reports provider switches and recoveries with a visible warning when capability or cost may change. Redacted failure facts go to Wingman logs; no prompt, key or raw provider error body is needed. `notify_switches` controls visible transition notices.
+- Reports provider switches and recoveries with visible notices by default, including provider/model and a warning that cost and capabilities can change. If the optional `notify_switches` setting is turned off, transition notices are suppressed; request failures still return as errors. Redacted failure facts contain no prompt, key or raw provider error body.
 - Offers model IDs from each configured provider so you can copy an exact ID. You choose the model; the module does not benchmark or choose it for you.
 - Can end with a local OpenAI-compatible server on your computer or another Windows/Linux machine. The module runs alongside Wingman; remote inference remains the server's job.
 - Owns its loopback listener and closes it on skill unload. It creates no scheduled task or permanent background daemon.
 - Supports native Anthropic Messages with explicit thinking/effort settings, alongside existing OpenAI-compatible routes. Native Messages currently accepts nonstreaming conversation requests; compatible routes retain streaming.
 - Optionally asks Wingman's existing decision model to narrow the first tool choice on a text turn. This is off by default: it can increase latency, cost or mistakes. An uncertain or unavailable decision keeps the full tool list; exhausted Jev credits disable assistance until reset. A provider refusal stays a refusal.
 
-## Install and configure
+## Optional Support chain
 
-[Download the skill ZIP](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall/releases/latest) · [Source](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall)
+Support is disabled by default. Set `support_enabled: true` only when you want
+this skill to handle Support requests that Core has already scheduled. Enabling
+the chain consents to requests attempting configured routes in order when the
+selected fallback policy permits; API charges may apply at any attempted route.
+The default is `credits_only`; generic backend errors and temporary failures do
+not trigger fallback under that preset. `availability` and route-specific
+`fallback_on` overrides are explicit broader choices. The provider gateway may
+also apply its own retries, which this skill cannot observe or control. There is no second
+confirmation per fallback.
+Choose models and credential references deliberately. Do not infer that a route
+is free from its provider label, secret name or lack of a key field. Switch and
+recovery notices identify the provider/model and warn that costs can change.
+The module does not calculate or display actual billing. These notices use the existing
+`notify_switches` setting (on by default). Disabling notices does not convert a
+failed request into success. Failure diagnostics use bounded request IDs and
+redacted details, never raw prompts, keys or provider error bodies.
 
-1. Extract the release ZIP so `provider_fallback/default_config.yaml` is directly inside Wingman's `custom_skills` directory. On Windows this is normally `%APPDATA%\ShipBit\WingmanAI\custom_skills`. Avoid an extra nested ZIP folder.
-2. Fully restart Wingman after installing a new skill, so its startup compatibility catalogue sees it.
-3. Add a strong random **local bridge bearer** to Wingman's Secrets as `waterfall_bridge`. Add your provider keys under separate secret names. Never put key values in the route JSON.
-4. Open **Provider fallback** settings for your Wingman. Set its port (default `4141`), bridge secret name (`waterfall_bridge`) and ordered routes JSON below, then enable the skill. Use a different free port if you run a second instance. Apply settings and re-enable the skill after route/port changes.
-5. In that Wingman's conversation provider, choose the existing **local / OpenAI-compatible** provider. Set endpoint `http://127.0.0.1:4141/v1` and model `waterfall`. Wingman uses its `local_llm` secret for this connection: set that secret to the same bridge bearer. This name describes the interface; the selected upstream model may be cloud-hosted.
-6. Ask for a short text reply, then a read-only skill lookup. Use `provider_fallback_status` to see which route was selected. Keep a copy of your original endpoint/model so you can switch back.
+The Support chain is independent from Main. Changing Support routes does not
+replace Main's Waterfall bearer or Main provider/model. Main continues to use
+port `4141` and its configured bridge secret reference. Support uses
+its own infer-only, OpenAI-compatible listener at `http://127.0.0.1:4142/v1`;
+configure Wingman's existing Support provider to use model `local-model`. Core
+supplies the fixed local auth value `not-needed`; do not copy the Main bearer or
+enter a separate Support key. The listener accepts only local model-list and
+text completion requests, rejects tools and streaming, and has no
+cross-origin/browser or LAN access. Status/reset handlers are not reachable
+through the Support listener. Local software running as your Windows user can
+reach this stock-compatible listener; it is not an isolation boundary from other
+programs on your computer.
 
-Wingman's `local_llm` secret is shared. If other Wingmen use a gateway requiring a different key, keep that limitation in mind before replacing it. Keyless local servers commonly ignore the bearer; authenticated gateways may not. The module does not rewrite other Wingmen.
+For a Support route using `wire_protocol: "wingman_support"`, the upstream
+route endpoint itself must end in `/support/completions` (for example, the
+provider's documented support-completion URL). This is distinct from the local
+listener's `/v1/chat/completions` endpoint.
+
+Role enablement and Support listener settings are:
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `main_enabled` | `false` | Explicit opt-in to the Main Waterfall route. |
+| `fallback_mode` | `credits_only` | Main route fallback policy; existing profiles that omit it retain legacy `availability`. |
+| `notify_switches` | `true` | Show Main provider switch and recovery notices. |
+| `support_enabled` | `false` | Explicit opt-in to the configured Support route chain. |
+| `support_listen_port` | `4142` | Dedicated loopback Support listener port; keep it distinct from Main. |
+| `support_routes_json` | `[]` | Ordered provider/model routes. Configure valid routes before enabling Support. |
+| `support_fallback_mode` | `credits_only` | Independent Support fallback policy; choose `availability` or `manual` explicitly when appropriate. |
+
+A fresh install needs no new endpoint, API key or settings: Main and Support are
+both disabled. When upgrading from 0.1/0.2, check **Enable Main fallback**: Core may
+add the new disabled default while refreshing the skill. Re-enable it to retain
+your already configured Main route. No stock settings are rewritten. An enabled role requires a valid ordered route
+list. Missing/invalid route settings cause a visible module configuration error
+rather than silently choosing a model. Core continues to own Support scheduling
+and memory policy.
+
+A profile can order Wingman-hosted Haiku through an existing `wingman_pro`
+credential reference, then an own-API Haiku through a separate existing secret
+reference, then a final local Qwen-compatible endpoint. Replace these illustrative
+choices with providers/models available to you. The final local route avoids
+per-call API charges but still uses host resources. Keep endpoints and secret
+*names* in the profile; put key *values* only in Wingman Secrets. The generic
+skill defaults contain no personal endpoints, model IDs or keys.
+
+For the stock Wingman Support completion contract, mark only that route with
+`wire_protocol: "wingman_support"`; its adapter sends the stock Support request
+to the configured upstream `/support/completions` endpoint. Other routes must
+use a protocol they actually support, such as `openai_chat` or the existing
+`anthropic_messages` adapter. An optional `omit_request_fields` list can remove
+inherited sampling or other optional fields unsupported by a route. It does not
+remove the required prompt, model or completion contract. Unsupported protocols
+or malformed route settings fail explicitly; they do not fall back to Main.
+
+Back up the current Wingman profile/settings and keep the previous skill ZIP
+before upgrading. Build or install the versioned `provider_fallback-0.3.0.zip`,
+then enable Support only after its routes and secret references are configured.
+To roll back, restore the saved settings and previous skill package. The Main
+endpoint and bearer remain separate throughout.
 
 Example routes (replace model IDs and secret **names**, not key values):
 
@@ -50,7 +155,7 @@ Configure `routes_json` as an ordered JSON array. Each object has `route_id`, fu
 
 ```json
 [
-  {"route_id":"preferred","endpoint":"https://api.anthropic.com/v1/messages","wire_protocol":"anthropic_messages","model":"YOUR_MODEL_ID","secret_name":"YOUR_CLAUDE_SECRET_NAME","request_overrides":{"thinking":{"type":"adaptive","display":"omitted"},"output_config":{"effort":"low"}}},
+  {"route_id":"preferred","endpoint":"https://api.anthropic.com/v1/messages","wire_protocol":"anthropic_messages","model":"YOUR_MODEL_ID","secret_name":"YOUR_CLAUDE_SECRET_NAME"},
   {"route_id":"backup","endpoint":"https://api.openai.com/v1/chat/completions","model":"YOUR_MODEL_ID","secret_name":"YOUR_OPENAI_SECRET_NAME"},
   {"route_id":"local","endpoint":"http://127.0.0.1:11434/v1/chat/completions","model":"YOUR_LOCAL_MODEL","final_local":true}
 ]
@@ -75,44 +180,45 @@ Signed blocks stay with their original endpoint, secret reference and model. A d
 - “Show provider fallback status.” → `provider_fallback_status`
 - “List models for route preferred.” → `provider_fallback_models(route_id="preferred")`
 - “Reset exhausted provider routes.” → `provider_fallback_reset`
+- “Reset exhausted providers for Support.” → `provider_fallback_reset(role="support")`
 
-These tools are also available directly in Wingman's tools interface. A model listing is not a benchmark or a guarantee of tool/image compatibility. Some providers paginate their model listings; the current tool returns the first advertised page only.
+If fallback happens, a visible notice names the role, model and reason when
+available. After restoring credits, reset that role; its next request tries the
+preferred provider again and announces recovery when successful. Replacing the
+stored key or restarting the module also clears its exhausted state. A reset
+does not add credits; failure log entries remain available afterward.
+
+These tools are also available directly in Wingman's tools interface. The hosted Support catalogue remains in Wingman’s own settings. A model listing is not a benchmark or a guarantee of tool/image compatibility. Some providers paginate their model listings; the current tool returns the first advertised page only.
 
 ## Fallback choices and diagnostics
 
 Choose `credits_only` to fall back on definite exhaustion, `availability` to include configured authentication/model and temporary availability failures, or `manual` to disable automatic fallback. The route-specific `fallback_on` list can specify `credit_exhausted`, `authentication_or_model_unavailable`, `temporary_unavailable`, and `connection_unavailable`, including an empty list. This list overrides the preset for that route. Policy refusals and uncertain or partial responses remain terminal. A gateway may independently select or retry providers for the same model; Waterfall does not control or observe those internal hops.
 
-`provider_fallback_status` reports route states and the last selected route. Failure log entries can include a generated request ID, bounded route/model identifiers, a fixed reason and safe HTTP status, rather than secrets or message content. Successful responses expose the request ID in `x-wingman-waterfall-request-id`; routing failures carry a generated ID where reported. Switch notices can be disabled with `notify_switches`; failure diagnostics remain enabled. Notification delivery failure is reported in status when observable. These are local diagnostic records, not a billing ledger or a claim about hidden gateway attempts.
+`provider_fallback_status` reports route states and the last selected route. Failure log entries can include a generated request ID, bounded route/model identifiers, a fixed reason and safe HTTP status, rather than secrets or message content. Successful responses expose the request ID in `x-wingman-waterfall-request-id`; not every early failure currently carries one. Switch notices can be disabled with `notify_switches`; failure diagnostics remain enabled. Notification delivery failure is reported in status when observable. These are local diagnostic records, not a billing ledger or a claim about hidden gateway attempts.
+
+A configured route is a provider/model reference, not proof that its account has independent quota. If multiple routes share one provider account, they may draw from the same credit pool even when they use different keys or model names. Report account-level exhaustion only when the provider makes that scope clear; otherwise keep it unknown. This skill does not ship a profile-specific provider, model, host or credential reference.
 
 ### Development comparison
 
-#### Does the same model need a separate Support call?
+#### Short-history Support comparison
 
-![Short-history and actual hosted Support comparison](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.png)
+![Short-history Support benchmark](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.png)
 
-[Follow-up report](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.md) · [Data](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.json) · [Separate session-memory research](benchmarks/WINGMAN-SESSION-MEMORY-RESEARCH-2026-11-09.md)
+Eight short tasks compare full history with a prepared summary and hosted Support; this is not a long-context or native gameplay test.
 
-In eight short-history tasks, Haiku Main scored 7/8 with either full history or an earlier Haiku summary. Waiting for a new summary added time and cost; an already prepared summary reduced measured foreground work. This does not test long sessions near their context budget, and the reused controls are not a repeated causal experiment. Costs scale the stated trial mix to 1,000; background summaries are conditional, not one extra call per question.
+#### Main and stock Support comparison
 
-Actual Wingman-hosted Support calls returned GLM 5.3 Flash by default and also worked with Haiku 5.5 on the existing Free plan. Dollar/quota consumption was not exposed. Saved settings were unchanged. **Waterfall routes Main; it does not replace Core's global Support or memory policy.** The supported hosted Haiku option is distinct from a direct Anthropic BYOK Support selector.
+![Main and stock Support benchmark](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.png)
 
-#### Main and Support roles — stock Jev only
+A separate 24-task source replay compares Main/Support model pairs and stock Jev; it does not test this module's optional Main helper.
 
-![Main and Support comparison](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.png)
+#### Main-model Jev comparison
 
-[Results and limitations](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.md) · [CSV](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.csv) · [Per-task grades](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.json)
+![Main-model Jev benchmark](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
 
-This separate 24-task source replay compares Haiku/Qwen Main and Support, with stock command preselection on/off. It **does not use this module's optional first-tool helper**. Haiku/Haiku matched 21/24 references versus 18/24 for Haiku/Qwen, 17/24 for Qwen/Haiku and 14/24 for Qwen/Qwen. Stock Jev shortened command selection without changing task success in this controlled replay. These are AI-reviewed synthetic tasks, not live Wingman or gameplay results.
+A 24-task synthetic comparison of Main routes with the optional first-tool helper; results are not live-session or gameplay evidence.
 
-The chart separates conditional background Support jobs from foreground time and cost. Costs are estimates per 1,000 copies of this trial mix, not 1,000 measured tasks or a full-session bill. Shared stages are explicitly replayed. Stock settings do not expose a direct Anthropic BYOK Support selector, and Waterfall routes **Main**, not Support. The later follow-up above measures the supported Wingman-hosted Support service; this earlier matrix remains a separate frozen cohort. No personal setting was changed by these tests.
-
-#### Broader Main-model comparison — optional added helper
-
-![Paired Jev comparison](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
-
-[Benchmark report](benchmarks/REPORT.md) · [CSV data](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.csv)
-
-The [24-task paired comparison JSON](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.json) and [chart](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png) contain 480 attempted case-runs across ten settings, with 96 prior direct controls reused. The references and grading are AI-reviewed development fixtures, not a human-reviewed held-out benchmark. Unknown outcomes are shown separately, not counted as wrong or silently removed from the total of 24.
+The [24-task Jev comparison](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png) and [results](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.json) contain 480 attempted case-runs across ten settings, with 96 prior direct controls reused. The [short-history Support comparison chart](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.png) and [report](benchmarks/WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.md) compare full history, ready summaries and hosted Support. These are AI-reviewed development fixtures, not human-reviewed held-out benchmarks; unknown outcomes remain separate from wrong answers.
 
 | Selected configuration | Fully correct / 24 | Unknown | All-attempt median | Estimated API cost / 1,000 tasks |
 | --- | ---: | ---: | ---: | ---: |
@@ -124,7 +230,7 @@ The [24-task paired comparison JSON](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.js
 
 ## Failure behavior
 
-The following table describes eligible outcomes **when allowed by the selected preset or route override**. In `credits_only` and `manual`, noneligible failures return rather than automatically choosing another route.
+The default fallback preset for new Main and Support routes is `credits_only`; legacy Main profiles that omitted it keep `availability`. The following table describes outcomes **when allowed by the selected preset or route override**. Noneligible failures return rather than automatically choosing another route. The gateway's own retry behavior is separate; Waterfall does not claim to control or observe internal gateway hops.
 
 | Response | Behavior |
 | --- | --- |
@@ -142,14 +248,10 @@ other HTTP 400 errors remain terminal. See [Claude's error reference](https://pl
 
 Unrelated secret saves do not clear exhausted routes. Updating a configured provider's key clears the relevant route state; changing the bridge bearer restarts its owned listener. Provider billing still applies to API calls. There is no promise of free inference or universal protocol support.
 
-## For Wingman maintainers
+## For maintainers
 
-The reusable routing core is `routing.py`; the optional HTTP adapter is `server.py`; `main.py` binds only public v3 Skill lifecycle and secret interfaces. The installed entry uses a small dependencies wrapper for Wingman's loader. A Core integration can call the router behind the existing LLM interface and omit the loopback adapter, retaining Core's credential and tool-execution ownership.
-
-The owned listener lifecycle adapts the project's existing speech bridge. Public integration seams are `Skill.prepare`, `unload`, `secret_changed` and `wingman.secrets.retrieve`. The configured skill auto-activates at startup so it does not need an LLM request to start its own inference endpoint. All runtime dependencies already belong to Wingman; see `NOTICE.md` and `LICENSE`.
-
-For development in the standalone repository, use Python 3.11 or newer with the
-dependencies in `pyproject.toml`, run `python -m pytest`, then
-`python build.py --out ../waterfall-release` with a fresh output directory.
-The builder verifies ZIP bytes and writes a per-file SHA-256 manifest. Wingman
-users need the ZIP, not a separate pip installation or this development setup.
+The package builder includes the existing role modules and stamps the release
+from `default_config.yaml`'s semantic version. Main and Support share routing
+primitives but keep separate listeners, route policy and secrets. See
+`build.py` and the focused routing/listener tests
+for release maintenance.

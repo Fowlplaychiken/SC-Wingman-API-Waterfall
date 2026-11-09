@@ -15,7 +15,7 @@ from api.interface import WingmanInitializationError
 from skills.skill_base import Skill, tool
 
 from .jev_assist import NativeJevAssist
-from .routing import ProviderWaterfall, RouteSpec
+from .routing import AccountHealth, ProviderWaterfall, RouteSpec
 from .server import create_app
 
 
@@ -93,6 +93,7 @@ class ProviderFallback(Skill):
     def __init__(self, config, settings, wingman):
         super().__init__(config=config, settings=settings, wingman=wingman)
         self._server = self._router = None
+        self._support_server = self._support_router = None
         self._subscribed = False
         self._lock = asyncio.Lock()
         self._keys = {}
@@ -102,6 +103,16 @@ class ProviderFallback(Skill):
         self._core_loop = None
 
     def _settings(self, errors):
+        properties = {p.id: p.value for p in self.config.custom_properties}
+        enabled = properties.get("main_enabled")
+        if enabled is None:
+            # Legacy profiles opted in by configuring both a secret and nonempty routes.
+            configured = properties.get("routes_json", "[]")
+            enabled = bool(properties.get("bridge_secret_name")) and bool(json.loads(configured))
+        if type(enabled) is not bool:
+            raise ValueError("invalid main setting")
+        if not enabled:
+            return None, None, []
         port = self.retrieve_custom_property_value("listen_port", errors)
         bridge_name = self.retrieve_custom_property_value("bridge_secret_name", errors)
         routes = self.retrieve_custom_property_value("routes_json", errors)
@@ -133,10 +144,46 @@ class ProviderFallback(Skill):
         ]
         return port, bridge_name, specs
 
+    def _support_settings(self):
+        properties = {p.id: p.value for p in self.config.custom_properties}
+        enabled = properties.get("support_enabled", False)
+        if type(enabled) is not bool:
+            raise ValueError("invalid support settings")
+        if not enabled:
+            return False, None, []
+        port = properties.get("support_listen_port", 4142)
+        if type(port) is not int or not 1024 <= port <= 65535:
+            raise ValueError("invalid support port")
+        if properties.get("main_enabled", True) and port == properties.get("listen_port"):
+            raise ValueError("support port conflicts with main")
+        routes = json.loads(properties.get("support_routes_json", "[]"))
+        if type(routes) is not list or not routes:
+            raise ValueError("missing support routes")
+        presets = {
+            "credits_only": ("credit_exhausted",),
+            "availability": (
+                "credit_exhausted",
+                "authentication_or_model_unavailable",
+                "temporary_unavailable",
+                "connection_unavailable",
+            ),
+            "manual": (),
+        }
+        mode = properties.get("support_fallback_mode", "credits_only")
+        if mode not in presets:
+            raise ValueError("invalid support fallback mode")
+        default_fallback = presets[mode]
+        specs = [
+            RouteSpec(**{**route, "fallback_on": route.get("fallback_on", default_fallback)})
+            for route in routes
+        ]
+        return True, port, specs
+
     async def validate(self):
         errors = await super().validate()
         try:
             self._settings(errors)
+            self._support_settings()
         except (ValueError, TypeError, KeyError):
             errors.append(
                 WingmanInitializationError(
@@ -169,12 +216,14 @@ class ProviderFallback(Skill):
                 return "unknown"
 
             kind = event.get("kind")
+            role = safe(event.get("role", "main"))
             route = safe(event.get("route_id"))
             model = safe(event.get("model"))
             if kind == "failure":
                 reason = event.get("reason")
                 status = event.get("http_status")
                 facts = {
+                    "role": role,
                     "route_id": route,
                     "model": model,
                     "reason": safe(reason),
@@ -188,14 +237,23 @@ class ProviderFallback(Skill):
                 if not properties.get("notify_switches", True):
                     return
                 if event.get("fallback"):
+                    failure = router.status().get("last_failure") or {}
+                    reason = safe(failure.get("reason"))
+                    if failure.get("request_id") != event.get("request_id"):
+                        reason = "unknown"
+                    request_id = safe(event.get("request_id"))
                     self.log.warning(
-                        f"Using fallback {route} (configured model {model}); "
-                        "capability and cost may change."
+                        f"Using {role} fallback {route} (configured model {model}); "
+                        f"reason: {reason}; request: {request_id}. Capability and cost may change."
                     )
                 elif event.get("previous_route_id"):
-                    self.log.info(f"Primary route restored: {route} (configured model {model}).")
+                    self.log.info(
+                        f"{role} primary route restored: {route} (configured model {model})."
+                    )
                 else:
-                    self.log.info(f"Primary route selected: {route} (configured model {model}).")
+                    self.log.info(
+                        f"{role} primary route selected: {route} (configured model {model})."
+                    )
         except Exception:
             marker = getattr(router, "note_notification_failed", None)
             if marker:
@@ -203,6 +261,13 @@ class ProviderFallback(Skill):
 
     async def _stop(self):
         self._event_generation += 1
+        if self._support_server is not None:
+            if (
+                await asyncio.to_thread(self._support_server.stop) is not True
+                or not self._support_server.cleanup_confirmed
+            ):
+                raise RuntimeError("provider_bridge_cleanup_unknown")
+            self._support_server = self._support_router = None
         if self._server is not None:
             if (
                 await asyncio.to_thread(self._server.stop) is not True
@@ -215,19 +280,23 @@ class ProviderFallback(Skill):
     async def _start(self):
         errors = []
         port, bridge_name, specs = self._settings(errors)
-        bridge_key = await self.wingman.secrets.retrieve(bridge_name, errors)
+        support_enabled, support_port, support_specs = self._support_settings()
+        bridge_key = await self.wingman.secrets.retrieve(bridge_name, errors) if specs else None
         keys = {}
-        for spec in specs:
+        for spec in (*specs, *support_specs):
             if spec.secret_name and spec.secret_name not in keys:
                 keys[spec.secret_name] = await self.wingman.secrets.retrieve(spec.secret_name, [])
-        if errors or not isinstance(bridge_key, str) or not bridge_key:
+        if errors or (specs and (not isinstance(bridge_key, str) or not bridge_key)):
             raise RuntimeError("provider_bridge_credentials_unavailable")
         # Missing optional provider secrets can fall through to another configured route.
         self._keys = keys
         self._bridge_name = bridge_name
         self._secret_hashes = {
             name: hashlib.sha256(value.encode()).digest()
-            for name, value in {**keys, bridge_name: bridge_key}.items()
+            for name, value in {
+                **keys,
+                **({bridge_name: bridge_key} if bridge_name else {}),
+            }.items()
             if isinstance(value, str)
         }
 
@@ -237,15 +306,38 @@ class ProviderFallback(Skill):
         self._event_generation += 1
         generation = self._event_generation
         holder = {}
-        self._router = ProviderWaterfall(
-            tuple(specs),
-            resolve,
-            assistance=NativeJevAssist(getattr(self.wingman, "system_one", None)),
-            on_event=lambda event: self._on_event(event, generation, holder["router"]),
-        )
-        holder["router"] = self._router
-        self._server = OwnedServer(create_app(self._router, bridge_key), port)
-        await asyncio.to_thread(self._server.start)
+        account_health = AccountHealth()
+        if specs:
+            self._router = ProviderWaterfall(
+                tuple(specs),
+                resolve,
+                assistance=NativeJevAssist(getattr(self.wingman, "system_one", None)),
+                account_health=account_health,
+                on_event=lambda event: self._on_event(event, generation, holder["router"]),
+            )
+            holder["router"] = self._router
+            self._server = OwnedServer(create_app(self._router, bridge_key), port)
+            await asyncio.to_thread(self._server.start)
+        if support_enabled:
+            from .server import create_support_app
+
+            support_holder = {}
+            self._support_router = ProviderWaterfall(
+                tuple(support_specs),
+                resolve,
+                role="support",
+                account_health=account_health,
+                on_event=lambda event: self._on_event(event, generation, support_holder["router"]),
+            )
+            support_holder["router"] = self._support_router
+            self._support_server = OwnedServer(
+                create_support_app(self._support_router), support_port
+            )
+            try:
+                await asyncio.to_thread(self._support_server.start)
+            except BaseException:
+                await self._stop()
+                raise
 
     async def prepare(self):
         async with self._lock:
@@ -255,7 +347,7 @@ class ProviderFallback(Skill):
             if not self._subscribed:
                 await super().prepare()
                 self._subscribed = True
-            if self._server is not None:
+            if self._server is not None or self._support_server is not None:
                 raise RuntimeError("provider_bridge_already_owned")
             if await self.validate():
                 raise RuntimeError("provider_bridge_configuration_unavailable")
@@ -263,13 +355,19 @@ class ProviderFallback(Skill):
 
     async def secret_changed(self, secrets):
         async with self._lock:
-            if self._server is None or self.is_unloaded:
+            if (self._server is None and self._support_server is None) or self.is_unloaded:
                 return
             if not isinstance(secrets, dict):
                 return
             relevant = {
                 self._bridge_name,
-                *(r.secret_name for r in self._router.routes if r.secret_name),
+                *(
+                    r.secret_name
+                    for router in (self._router, self._support_router)
+                    if router
+                    for r in router.routes
+                    if r.secret_name
+                ),
             }
             changed = {
                 name
@@ -288,9 +386,11 @@ class ProviderFallback(Skill):
                 value = secrets[name] if isinstance(secrets[name], str) else None
                 self._keys[name] = value
                 self._secret_hashes[name] = hashlib.sha256((value or "").encode()).digest()
-            for route in self._router.routes:
-                if route.secret_name in changed:
-                    self._router.reset(route.route_id)
+            for router in (self._router, self._support_router):
+                if router:
+                    for route in router.routes:
+                        if route.secret_name in changed:
+                            router.reset(route.route_id)
 
     async def unload(self):
         async with self._lock:
@@ -301,23 +401,40 @@ class ProviderFallback(Skill):
             self._secret_hashes.clear()
 
     @tool(name="provider_fallback_status", description="Show provider fallback route status.")
-    async def provider_fallback_status(self) -> str:
-        if not self._router:
+    async def provider_fallback_status(self, role: str = "main") -> str:
+        router = self._router_for(role)
+        if not router:
             return "Provider fallback is stopped."
-        return json.dumps(self._router.status())
+        return json.dumps(
+            {
+                **router.status(),
+                "role": role,
+                "enabled": True,
+                "payment_notice": "Credentialled provider routes may incur charges.",
+            }
+        )
 
     @tool(name="provider_fallback_reset", description="Reset exhausted provider routes.")
-    async def provider_fallback_reset(self) -> str:
-        if not self._router:
+    async def provider_fallback_reset(self, role: str = "main") -> str:
+        router = self._router_for(role)
+        if not router:
             return "Provider fallback is stopped."
-        self._router.reset()
+        router.reset()
         return "Provider fallback exhaustion state reset."
 
     @tool(name="provider_fallback_models", description="List models offered by a configured route.")
-    async def provider_fallback_models(self, route_id: str) -> str:
-        if not self._router:
+    async def provider_fallback_models(self, route_id: str, role: str = "main") -> str:
+        router = self._router_for(role)
+        if not router:
             return "Provider fallback is stopped."
         try:
-            return json.dumps(await self._router.discover_models(route_id))
+            return json.dumps(await router.discover_models(route_id))
         except (ValueError, RuntimeError):
             return "Model list unavailable for this route."
+
+    def _router_for(self, role):
+        if role == "main":
+            return self._router
+        if role == "support":
+            return self._support_router
+        return None

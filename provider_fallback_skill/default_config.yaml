@@ -1,7 +1,7 @@
 module: skills.provider_fallback.main
 name: ProviderFallback
 api_version: 3
-version: 0.2.0
+version: 0.3.0
 display_name: Provider fallback
 author: Star Citizen Computer contributors
 description:
@@ -11,6 +11,12 @@ hint:
 auto_activate: true
 discoverable_by_default: false
 custom_properties:
+  - id: main_enabled
+    name: Enable Main fallback
+    hint: Enable the configured Main chain; API routes may incur charges.
+    property_type: boolean
+    value: false
+    required: false
   - id: listen_port
     name: Loopback port
     property_type: number
@@ -43,4 +49,32 @@ custom_properties:
     name: Notify when provider changes
     property_type: boolean
     value: true
+    required: false
+  - id: support_enabled
+    name: Enable Support fallback
+    hint: Enable the configured Support chain; API routes may incur charges.
+    property_type: boolean
+    value: false
+    required: false
+  - id: support_listen_port
+    name: Support loopback port
+    property_type: number
+    value: 4142
+    required: false
+  - id: support_routes_json
+    name: Ordered Support routes JSON
+    property_type: string
+    value: "[]"
+    required: false
+  - id: support_fallback_mode
+    name: Support automatic fallback
+    property_type: single_select
+    options:
+      - label: Credit exhaustion only (recommended)
+        value: credits_only
+      - label: Provider availability
+        value: availability
+      - label: Manual only
+        value: manual
+    value: credits_only
     required: false
