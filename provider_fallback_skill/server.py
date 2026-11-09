@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hmac
+import ipaddress
 import json
 from contextlib import asynccontextmanager
 
@@ -14,7 +15,7 @@ from starlette.background import BackgroundTask
 from .routing import RoutingFailure
 
 
-def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
+def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024, support_only=False):
     if (
         type(bearer) is not str
         or not bearer
@@ -34,6 +35,24 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
 
     @app.middleware("http")
     async def authenticate(request, call_next):
+        if support_only:
+            try:
+                local = ipaddress.ip_address(request.client.host).is_loopback
+            except (ValueError, AttributeError):
+                local = False
+            if (
+                not local
+                or request.headers.get("origin")
+                or request.headers.get("sec-fetch-site") in {"cross-site", "same-site"}
+                or (request.method, request.url.path)
+                not in {
+                    ("GET", "/v1/models"),
+                    ("POST", "/v1/chat/completions"),
+                }
+            ):
+                return JSONResponse(
+                    {"error": {"code": "support_local_contract_only"}}, status_code=403
+                )
         supplied = request.headers.get("authorization", "")
         if not hmac.compare_digest(supplied.encode(), ("Bearer " + bearer).encode()):
             return JSONResponse({"error": {"code": "bridge_unauthorized"}}, status_code=401)
@@ -48,7 +67,15 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
 
     @app.get("/v1/models")
     async def models():
-        return {"object": "list", "data": [{"id": "waterfall", "object": "model"}]}
+        return {
+            "object": "list",
+            "data": [
+                {
+                    "id": "local-model" if support_only else "waterfall",
+                    "object": "model",
+                }
+            ],
+        }
 
     @app.get("/status")
     async def status():
@@ -78,6 +105,19 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
                 raise ValueError()
             if "stream" in payload and type(payload["stream"]) is not bool:
                 raise ValueError()
+            if support_only and (
+                payload.get("stream", False)
+                or set(payload) & {"tools", "tool_choice", "functions", "function_call"}
+                or not payload["messages"]
+                or any(
+                    type(m) is not dict
+                    or m.get("role") not in {"system", "user"}
+                    or type(m.get("content")) is not str
+                    or set(m) - {"role", "content"}
+                    for m in payload["messages"]
+                )
+            ):
+                raise ValueError()
         except (ValueError, UnicodeError):
             return JSONResponse({"error": {"code": "invalid_chat_request"}}, status_code=400)
         upstream = await router.open(payload, bridge_port=request.url.port)
@@ -96,6 +136,7 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
         headers = {
             "x-wingman-waterfall-route": upstream.route_id,
             "x-wingman-waterfall-request-id": upstream.request_id,
+            "x-wingman-waterfall-role": router.role,
         }
         for key in ("content-type", "content-encoding"):
             if key in upstream.response.headers:
@@ -117,3 +158,15 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024):
             return JSONResponse({"error": {"code": "upstream_transport_unknown"}}, status_code=502)
 
     return app
+
+
+def create_support_app(router, *, request_limit_bytes=8 * 1024 * 1024):
+    """Match Core's fixed local Support authentication without exposing Main admin."""
+    if router.role != "support":
+        raise ValueError("Support router required")
+    return create_app(
+        router,
+        "not-needed",
+        request_limit_bytes=request_limit_bytes,
+        support_only=True,
+    )

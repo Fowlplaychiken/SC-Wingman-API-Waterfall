@@ -19,20 +19,22 @@ See [model placement and hosted baselines](research/WINGMAN-MODEL-PLACEMENT-2026
 for role-specific recommendations and the remaining comparison gap. The vision
 box describes an image-capable Main model, not an additional stock model.
 
-**Waterfall belongs on the main conversation model.** That model handles the
-conversation, reasoning, tool choices and tool arguments. Improving only the
-support model would not improve those main-model decisions or replace Jev.
+**Waterfall can route Main and, optionally, Core's existing Support role.** Main
+handles conversation, reasoning, tool choices and tool arguments. The optional
+Support chain serves only requests Core already schedules; Core retains its
+scheduler and memory policy. Support does not change Main's provider, and neither
+role replaces Jev.
 
 ![Wingman model roles](diagrams/WINGMAN-MODEL-ROLES.png)
 
-The stock map omits our extensions. This second map adds them explicitly:
+The stock map is unchanged. This older extension map illustrates Main-only Waterfall; it does not show the optional Support chain:
 
-![Wingman with optional unofficial extensions](diagrams/WINGMAN-MODEL-ROLES-EXTENSIONS.png)
+![Main-only Waterfall extension; Support remains separate](diagrams/WINGMAN-MODEL-ROLES-EXTENSIONS.png)
 
 | Role | Job | Waterfall scope |
 |---|---|---|
-| Main conversation model | Understand requests, reason, choose tools, interpret results and answer. Skills can explicitly make main-model side calls too. | The configured main provider points at Waterfall; it selects the preferred model or an eligible backup. |
-| Support model | Background memory extraction, conversation summaries and inexpensive, explicitly requested skill work. | Its global setting remains separate. These main-model benchmark results do not rank support-task quality. |
+| Main conversation model | Understand requests, reason, choose tools, interpret results and answer. Skills can explicitly make main-model side calls too. | The configured Main provider can point at Waterfall; its ordered Main routes select the preferred model or eligible backup. Optional Jev assistance applies to Main routes only. |
+| Support model | Background memory extraction, conversation summaries and inexpensive, explicitly requested skill work. | Optional Waterfall Support routes use a separate local Support endpoint and independent provider/model chain. Core still schedules Support and owns memory policy. |
 | Decision model / Jev | Fast, bounded choices through Wingman's decision interface. Enabled uses depend on the task/settings. | Wingman's own Jev route remains separate. Optional per-route assistance reuses that interface before a main-model tool choice; it does not replace the main model. |
 | Embedding model | Turn text into vectors for memory/retrieval. | Separate from the conversation route and generative reasoning. |
 | Speech recognition / synthesis | Convert microphone audio to text and response text to audio. | Separate STT/TTS settings and services. |
@@ -46,7 +48,7 @@ Those examples do not imply every request passes through every model.
 
 ## What Waterfall changes
 
-Waterfall is selected as a Wingman main conversation provider. Its ordered routes affect main-model calls, including explicit skill main-model side calls. Support, Jev, embedding and speech settings remain separate. Optional Jev assistance reuses the configured public decision interface.
+Waterfall can be selected independently for Wingman Main and Support. Its Main routes affect main-model calls, including explicit skill main-model side calls; the optional Support chain handles only Support requests Core has already scheduled. Core retains scheduling and memory policy. Main and Support have separate routes and provider/model credential references. Optional Jev assistance reuses the configured public decision interface on Main routes only.
 
 The accompanying 24-task comparison is a main-model/tool benchmark. It does not rank Support memory extraction or background summarization. No benchmark rerun or Support setting change was needed for this role clarification.
 
@@ -63,9 +65,8 @@ this audit; the source paths independently establish the distinctions.
 - [`SkillSystemOne`](https://github.com/ShipBit/wingman-ai/blob/f0364106a9ea13eb5aee45f73cd9af86c79cd213/wingmen/facade.py#L1871) exposes typed decisions.
 
 Engineering modules are deliberately omitted from these shareable diagrams.
-The two maps show stock Wingman directly calling its main provider, then the
-same route with optional Waterfall inserted. Support and Jev remain separate
-in both versions.
+The stock map remains unchanged. The older extension map shows Waterfall on Main
+only; it does not depict the optional Support chain. Jev remains separate.
 
 The [stock diagram source](diagrams/WINGMAN-MODEL-ROLES.mmd) and
 [extension diagram source](diagrams/WINGMAN-MODEL-ROLES-EXTENSIONS.mmd) are role maps, not a

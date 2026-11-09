@@ -17,6 +17,14 @@ import httpx
 from .native_messages import NativeMessagesError, from_native, to_native
 
 
+class AccountHealth:
+    """Session-only credit state shared by roles using the same account reference."""
+
+    def __init__(self):
+        self.lock = threading.RLock()
+        self.exhausted = set()
+
+
 @dataclass(frozen=True)
 class RouteSpec:
     route_id: str
@@ -28,6 +36,7 @@ class RouteSpec:
     wire_protocol: str = "openai_chat"
     jev_assist: bool = False
     jev_min_confidence: float = 0.8
+    omit_request_fields: tuple[str, ...] = ()
     fallback_on: tuple[str, ...] = (
         "credit_exhausted",
         "authentication_or_model_unavailable",
@@ -45,9 +54,13 @@ class RouteSpec:
             or url.password
             or url.query
             or url.fragment
-            or self.wire_protocol not in {"openai_chat", "anthropic_messages"}
+            or self.wire_protocol not in {"openai_chat", "anthropic_messages", "wingman_support"}
             or not url.path.endswith(
-                "/messages" if self.wire_protocol == "anthropic_messages" else "/chat/completions"
+                "/messages"
+                if self.wire_protocol == "anthropic_messages"
+                else "/support/completions"
+                if self.wire_protocol == "wingman_support"
+                else "/chat/completions"
             )
             or type(self.final_local) is not bool
             or type(self.jev_assist) is not bool
@@ -61,6 +74,8 @@ class RouteSpec:
                 and (type(self.secret_name) is not str or not self.secret_name.strip())
             )
             or type(self.request_overrides) is not dict
+            or type(self.omit_request_fields) not in (list, tuple)
+            or any(type(x) is not str for x in self.omit_request_fields)
             or type(self.fallback_on) not in (list, tuple)
             or any(
                 x
@@ -76,6 +91,19 @@ class RouteSpec:
             raise ValueError("Invalid provider route or protocol endpoint")
         if set(self.request_overrides) & {"messages", "tools", "tool_choice", "model", "stream"}:
             raise ValueError("Route overrides cannot replace messages, tools, model or stream")
+        if set(self.omit_request_fields) - {
+            "temperature",
+            "top_p",
+            "top_k",
+            "presence_penalty",
+            "frequency_penalty",
+            "chat_template_kwargs",
+            "repeat_penalty",
+            "min_p",
+            "seed",
+            "stop",
+        }:
+            raise ValueError("Only provider sampling fields can be omitted")
         json.dumps(self.request_overrides, allow_nan=False)
 
 
@@ -119,6 +147,8 @@ class ProviderWaterfall:
         cooldown_seconds=30,
         assistance=None,
         on_event=None,
+        role="main",
+        account_health=None,
     ):
         self.routes = tuple(routes)
         if (
@@ -126,6 +156,11 @@ class ProviderWaterfall:
             or any(type(r) is not RouteSpec for r in self.routes)
             or len({r.route_id for r in self.routes}) != len(self.routes)
             or any(r.final_local for r in self.routes[:-1])
+            or role not in {"main", "support"}
+            or any(r.wire_protocol == "wingman_support" for r in self.routes)
+            and role != "support"
+            or role == "support"
+            and any(r.jev_assist for r in self.routes)
         ):
             raise ValueError(
                 "Unique ordered routes are required; optional local fallback goes last"
@@ -140,9 +175,11 @@ class ProviderWaterfall:
         self.timeout_seconds = timeout_seconds
         self.response_limit_bytes = response_limit_bytes
         self.cooldown_seconds = cooldown_seconds
-        self._lock = threading.RLock()
+        self.role = role
+        self._account_health = account_health if account_health is not None else AccountHealth()
+        self._lock = self._account_health.lock
         self._state = {}
-        self._exhausted = set()
+        self._exhausted = self._account_health.exhausted
         self._active = {}
         self._closed = False
         self.assistance = assistance
@@ -156,6 +193,7 @@ class ProviderWaterfall:
 
     def _failure(self, route, reason, status, *, request_id=None, provider_request_id=None):
         event = {
+            "role": self.role,
             "route_id": route.route_id,
             "model": route.model,
             "reason": reason,
@@ -187,6 +225,7 @@ class ProviderWaterfall:
 
     def _terminal(self, route, status, code, request_id):
         event = {
+            "role": self.role,
             "route_id": route.route_id,
             "model": route.model,
             "reason": code,
@@ -199,6 +238,7 @@ class ProviderWaterfall:
         return RoutingFailure(status, code, request_id)
 
     def _event(self, event):
+        event = {**event, "role": self.role}
         if self.on_event is not None:
             try:
                 self.on_event(event)
@@ -213,6 +253,7 @@ class ProviderWaterfall:
     def status(self):
         with self._lock:
             return {
+                "role": self.role,
                 "closed": self._closed,
                 "last_selected_route": self._last_selected_route,
                 "last_failure": self._last_failure,
@@ -236,7 +277,7 @@ class ProviderWaterfall:
         with self._lock:
             if route_id is None:
                 self._state.clear()
-                self._exhausted.clear()
+                self._exhausted.difference_update(self._account(r) for r in self.routes)
                 self._last_failure = None
                 if self.assistance is not None:
                     self.assistance.reset()
@@ -323,14 +364,18 @@ class ProviderWaterfall:
                 with self._lock:
                     if self._closed:
                         raise RoutingFailure(503, "bridge_closed")
-                selected_payload = payload
+                selected_payload = {
+                    key: value
+                    for key, value in payload.items()
+                    if key not in route.omit_request_fields
+                }
                 assistance_status = None
                 if route.jev_assist and self.assistance is not None:
                     from .jev_assist import NativeJevRefused
 
                     try:
                         selected_payload, assistance_status = await self.assistance.assist(
-                            payload, route.jev_min_confidence
+                            selected_payload, route.jev_min_confidence
                         )
                     except NativeJevRefused:
                         raise RoutingFailure(403, "decision_provider_refused") from None
@@ -367,6 +412,22 @@ class ProviderWaterfall:
                         else message
                         for message in body["messages"]
                     ]
+                    if route.wire_protocol == "wingman_support":
+                        # The stock hosted Support endpoint has a smaller contract
+                        # than llama.cpp. Keep messages and supported budgets only.
+                        body = {
+                            k: v
+                            for k, v in body.items()
+                            if k
+                            in {
+                                "messages",
+                                "model",
+                                "max_tokens",
+                                "temperature",
+                                "top_p",
+                                "presence_penalty",
+                            }
+                        }
                 request = client.build_request("POST", route.endpoint, headers=headers, json=body)
                 response = await client.send(request, stream=True)
                 status = response.status_code
@@ -385,6 +446,24 @@ class ProviderWaterfall:
                         response = httpx.Response(
                             200,
                             stream=httpx.ByteStream(converted),
+                            request=request,
+                            headers={"content-type": "application/json"},
+                        )
+                    if self.role == "support":
+                        try:
+                            raw_reply = await self._read(response)
+                            reply = json.loads(raw_reply)
+                            choice = reply["choices"][0]
+                            if type(choice["message"]["content"]) is not str or choice[
+                                "message"
+                            ].get("tool_calls"):
+                                raise ValueError()
+                        except (ValueError, TypeError, KeyError, IndexError):
+                            raise RoutingFailure(502, "support_response_invalid") from None
+                        await response.aclose()
+                        response = httpx.Response(
+                            200,
+                            stream=httpx.ByteStream(raw_reply),
                             request=request,
                             headers={"content-type": "application/json"},
                         )
@@ -417,7 +496,8 @@ class ProviderWaterfall:
                     raise RoutingFailure(504, "upstream_timeout_unknown")
                 raw = await self._read(response)
                 try:
-                    error = json.loads(raw).get("error", {})
+                    document = json.loads(raw)
+                    error = document.get("error", document)
                     code = error.get("code") or error.get("type")
                     message = error.get("message")
                 except (ValueError, AttributeError):
@@ -454,6 +534,9 @@ class ProviderWaterfall:
                         "insufficient_quota",
                         "insufficient_credits",
                         "credit_balance_too_low",
+                        "support_allowance_exhausted",
+                        "allowance_exhausted",
+                        "monthly_quota_exceeded",
                     }
                 )
                 reason = (
@@ -535,6 +618,10 @@ class ProviderWaterfall:
         route = next((r for r in self.routes if r.route_id == route_id), None)
         if route is None:
             raise ValueError("Unknown route")
+        if route.wire_protocol == "wingman_support":
+            # Hosted catalogue is owned by Wingman's client/provider integration;
+            # do not invent an OpenAI /models endpoint for that protocol.
+            raise RoutingFailure(501, "use_wingman_support_model_catalogue")
         headers = await self._headers(route)
         if headers is None:
             raise RoutingFailure(401, "missing_secret")
