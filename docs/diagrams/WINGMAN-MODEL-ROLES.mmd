@@ -15,5 +15,4 @@ flowchart TD
   support --> memory[Memory and context]
   embedding[Embedding model: retrieval vectors] --> memory
   memory -. context .-> core
-  screen[Game screenshot] --> vision[Image-capable main model]
-  vision -->|typed observations| tools
+  screen[Game screenshot] -->|skill attaches image if Main supports vision| main
