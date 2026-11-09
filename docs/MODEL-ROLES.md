@@ -1,5 +1,8 @@
 # Wingman model roles
 
+Wingman Core is the coordinating software, not a fourth AI model. It calls the
+configured Main, Support, decision and embedding interfaces when needed.
+
 See [model placement and hosted baselines](research/WINGMAN-MODEL-PLACEMENT-2026-11-09.md)
 for role-specific recommendations and the remaining comparison gap. The vision
 box describes an image-capable Main model, not an additional stock model.
