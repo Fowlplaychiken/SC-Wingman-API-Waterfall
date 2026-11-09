@@ -1,0 +1,225 @@
+{
+  "date": "2026-11-09",
+  "scope": "Isolated original stock decision provider/client/builders/readers; not installed Core end-to-end or Main/Support comparison.",
+  "supplier": "f0364106a9ea13eb5aee45f73cd9af86c79cd213",
+  "release": "3.2.14",
+  "requested_model": "~typesafe/jev-latest",
+  "returned_models": [
+    "typesafe/jev-1.14-20261014"
+  ],
+  "cases_prepared": 24,
+  "requests": 22,
+  "reference_matches": 21,
+  "median_wall_ms": 135.96255000447854,
+  "total_cost_usd_reported": 0.000537978,
+  "no_request_cases": [
+    {
+      "case_id": "VOC-05",
+      "state": "skipped_unverified_candidate"
+    },
+    {
+      "case_id": "UEX-01",
+      "state": "exact_match_bypass"
+    }
+  ],
+  "groups": [
+    {
+      "feature": "core_command",
+      "correct": 7,
+      "requests": 8,
+      "median_wall_ms": 139.73889999033418,
+      "total_cost_usd_reported": 0.000283962
+    },
+    {
+      "feature": "core_vocabulary",
+      "correct": 7,
+      "requests": 7,
+      "median_wall_ms": 141.2257999763824,
+      "total_cost_usd_reported": 0.000119364
+    },
+    {
+      "feature": "core_wingman_choice",
+      "correct": 4,
+      "requests": 4,
+      "median_wall_ms": 130.7696500007296,
+      "total_cost_usd_reported": 7.501199999999999e-05
+    },
+    {
+      "feature": "uex_entity_match",
+      "correct": 3,
+      "requests": 3,
+      "median_wall_ms": 106.72329997760244,
+      "total_cost_usd_reported": 5.963999999999999e-05
+    }
+  ],
+  "per_case": [
+    {
+      "case_id": "CMD-01",
+      "feature": "core_command",
+      "reference_agreement": false,
+      "wall_ms": 734.7273000050336,
+      "cost_usd_reported": 3.57e-05
+    },
+    {
+      "case_id": "CMD-02",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 129.7820000036154,
+      "cost_usd_reported": 3.528e-05
+    },
+    {
+      "case_id": "CMD-03",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 145.98329999716952,
+      "cost_usd_reported": 3.5364e-05
+    },
+    {
+      "case_id": "CMD-04",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 111.64149999967776,
+      "cost_usd_reported": 3.5406e-05
+    },
+    {
+      "case_id": "CMD-05",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 104.6193000220228,
+      "cost_usd_reported": 3.5322e-05
+    },
+    {
+      "case_id": "CMD-06",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 138.3495999907609,
+      "cost_usd_reported": 3.5532e-05
+    },
+    {
+      "case_id": "CMD-07",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 141.12819998990744,
+      "cost_usd_reported": 3.5868e-05
+    },
+    {
+      "case_id": "CMD-08",
+      "feature": "core_command",
+      "reference_agreement": true,
+      "wall_ms": 220.3723999846261,
+      "cost_usd_reported": 3.549e-05
+    },
+    {
+      "case_id": "VOC-01",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 144.58120000199415,
+      "cost_usd_reported": 1.6968e-05
+    },
+    {
+      "case_id": "VOC-02",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 141.2257999763824,
+      "cost_usd_reported": 1.6884e-05
+    },
+    {
+      "case_id": "VOC-03",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 241.5047999820672,
+      "cost_usd_reported": 1.7178e-05
+    },
+    {
+      "case_id": "VOC-04",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 125.01440002233721,
+      "cost_usd_reported": 1.6926e-05
+    },
+    {
+      "case_id": "VOC-06",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 144.99150001211092,
+      "cost_usd_reported": 1.7094e-05
+    },
+    {
+      "case_id": "VOC-07",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 127.42599999182858,
+      "cost_usd_reported": 1.7178e-05
+    },
+    {
+      "case_id": "VOC-08",
+      "feature": "core_vocabulary",
+      "reference_agreement": true,
+      "wall_ms": 139.2207999888342,
+      "cost_usd_reported": 1.7136e-05
+    },
+    {
+      "case_id": "WNG-01",
+      "feature": "core_wingman_choice",
+      "reference_agreement": true,
+      "wall_ms": 127.96379998326302,
+      "cost_usd_reported": 1.7724e-05
+    },
+    {
+      "case_id": "WNG-02",
+      "feature": "core_wingman_choice",
+      "reference_agreement": true,
+      "wall_ms": 133.57550001819618,
+      "cost_usd_reported": 1.764e-05
+    },
+    {
+      "case_id": "WNG-03",
+      "feature": "core_wingman_choice",
+      "reference_agreement": true,
+      "wall_ms": 98.80369997699745,
+      "cost_usd_reported": 1.9908e-05
+    },
+    {
+      "case_id": "WNG-04",
+      "feature": "core_wingman_choice",
+      "reference_agreement": true,
+      "wall_ms": 162.83929999917746,
+      "cost_usd_reported": 1.974e-05
+    },
+    {
+      "case_id": "UEX-02",
+      "feature": "uex_entity_match",
+      "reference_agreement": true,
+      "wall_ms": 101.10729999723844,
+      "cost_usd_reported": 1.9824e-05
+    },
+    {
+      "case_id": "UEX-03",
+      "feature": "uex_entity_match",
+      "reference_agreement": true,
+      "wall_ms": 130.6429999822285,
+      "cost_usd_reported": 2.0076e-05
+    },
+    {
+      "case_id": "UEX-04",
+      "feature": "uex_entity_match",
+      "reference_agreement": true,
+      "wall_ms": 106.72329997760244,
+      "cost_usd_reported": 1.974e-05
+    }
+  ],
+  "input_sha256": {
+    "cases-v2.json": "8f39715e958639e59d842a629a362a6678e34796089ff31947fa139263d95355",
+    "command-offers-v2.json": "1876b908dd88f295ac612799e3e687d4a7d022c75096dcb24fe53f9ef782dede",
+    "run_native_decisions.py": "27988b54ade886be0d031419447b8f4a095aa9e31f4fcba7edb701c832d720e9"
+  },
+  "limitations": [
+    "Independent stage fixtures, not live microphone/STT or actual Core gates/cooldowns.",
+    "Vocabulary off baseline is candidate-word source review; whole-sentence matcher not executed.",
+    "UEX fuzzy candidates are supplied, with two positive examples already present in supplier prompts.",
+    "Only eight command options, not the full 65-command profile; toggles grade intent, not achieved state.",
+    "Source-equivalent exact-hit bypass; one absent-candidate fixture skipped.",
+    "One preselected command was declined by the multiple-command detector; a real Main fallback was not run.",
+    "No additional Main helper, Support helper, game input, new model load or live settings change."
+  ]
+}

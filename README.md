@@ -86,6 +86,18 @@ Choose `credits_only` to fall back on definite exhaustion, `availability` to inc
 
 ### Development comparison
 
+#### Main and Support roles — stock Jev only
+
+![Main and Support comparison](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.png)
+
+[Results and limitations](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.md) · [CSV](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.csv) · [Per-task grades](benchmarks/WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.json)
+
+This separate 24-task source replay compares Haiku/Qwen Main and Support, with stock command preselection on/off. It **does not use this module's optional first-tool helper**. Haiku/Haiku matched 21/24 references versus 18/24 for Haiku/Qwen, 17/24 for Qwen/Haiku and 14/24 for Qwen/Qwen. Stock Jev shortened command selection without changing task success in this controlled replay. These are AI-reviewed synthetic tasks, not live Wingman or gameplay results.
+
+The chart separates conditional background Support jobs from foreground time and cost. Costs are estimates per 1,000 copies of this trial mix, not 1,000 measured tasks or a full-session bill. Shared stages are explicitly replayed. Haiku Support is a measured candidate: stock settings do not expose a direct Anthropic BYOK Support selector, and Waterfall currently routes **Main**, not Support. The actual Wingman-hosted Support baseline remains unmeasured. No personal setting was changed by these tests.
+
+#### Broader Main-model comparison — optional added helper
+
 ![Paired Jev comparison](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
 
 [Benchmark report](benchmarks/REPORT.md) · [CSV data](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.csv)
