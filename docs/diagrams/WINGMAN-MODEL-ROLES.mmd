@@ -1,0 +1,19 @@
+flowchart TD
+  voice[Voice] --> stt[Speech recognition]
+  text[Typed request] --> core[Wingman conversation and routing]
+  stt --> core
+  core --> main[Main model: reasoning and tool use]
+  main --> tools[Skills and supported commands]
+  tools -->|results| main
+  main --> reply[Answer text]
+  reply --> tts[Speech synthesis]
+  core -. background work .-> support[Support: memory and summaries]
+  tools -. explicit inexpensive work .-> support
+  tools -. explicit main-model side call .-> main
+  core -. enabled bounded choices .-> jev[Decision model: Jev]
+  jev -. decision result .-> core
+  support --> memory[Memory and context]
+  embedding[Embedding model: retrieval vectors] --> memory
+  memory -. context .-> core
+  screen[Game screenshot] --> vision[Image-capable main model]
+  vision -->|typed observations| tools
