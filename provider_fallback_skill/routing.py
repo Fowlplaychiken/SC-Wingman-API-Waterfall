@@ -215,8 +215,11 @@ class ProviderWaterfall:
                 try:
                     error = json.loads(raw).get("error", {})
                     code = error.get("code") or error.get("type")
+                    message = error.get("message")
                 except (ValueError, AttributeError):
+                    error = {}
                     code = None
+                    message = None
                 # Provider content/policy denials are terminal, never routed around.
                 if status == 403 or code in {
                     "content_policy_violation",
@@ -224,11 +227,26 @@ class ProviderWaterfall:
                     "moderation_blocked",
                 }:
                     raise RoutingFailure(status if status >= 400 else 403, "provider_refused")
-                exhausted = status == 402 or code in {
-                    "insufficient_quota",
-                    "insufficient_credits",
-                    "credit_balance_too_low",
-                }
+                anthropic_credit = (
+                    url.hostname == "api.anthropic.com"
+                    and status == 400
+                    and isinstance(error, dict)
+                    and error.get("type") == "invalid_request_error"
+                    and isinstance(message, str)
+                    and message.startswith(
+                        "Your credit balance is too low to access the Anthropic API."
+                    )
+                )
+                exhausted = (
+                    anthropic_credit
+                    or status == 402
+                    or code
+                    in {
+                        "insufficient_quota",
+                        "insufficient_credits",
+                        "credit_balance_too_low",
+                    }
+                )
                 with self._lock:
                     if exhausted:
                         self._exhausted.add(self._account(route))
@@ -238,7 +256,9 @@ class ProviderWaterfall:
                             "reason": "authentication_or_model_unavailable",
                             "disabled_until_reset": True,
                         }
-                    elif status in {429, 500, 502, 503, 504}:
+                    elif status in {429, 500, 502, 503, 504} or (
+                        status == 529 and url.hostname == "api.anthropic.com"
+                    ):
                         retry = response.headers.get("retry-after", "")
                         seconds = (
                             float(retry)

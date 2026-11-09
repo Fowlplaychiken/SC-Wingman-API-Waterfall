@@ -34,6 +34,82 @@ def routes():
     )
 
 
+def test_anthropic_credit_400_is_scoped_sticky_and_overload_is_temporary():
+    async def run():
+        actual = (
+            RouteSpec("anthropic", "https://api.anthropic.com/v1/chat/completions", "h", "k"),
+            RouteSpec("local", "http://127.0.0.1:9000/v1/chat/completions", "q"),
+        )
+        requests = []
+        mode = "credit"
+
+        def handler(request):
+            requests.append(request.url.host)
+            if request.url.host != "api.anthropic.com":
+                return response()
+            if mode == "credit":
+                return response(
+                    400,
+                    {
+                        "error": {
+                            "type": "invalid_request_error",
+                            "message": (
+                                "Your credit balance is too low to access the Anthropic API."
+                                " Please add credit."
+                            ),
+                        }
+                    },
+                )
+            if mode == "overload":
+                return response(529, {"error": {"type": "overloaded_error"}})
+            return response(
+                400, {"error": {"type": "invalid_request_error", "message": "Bad model"}}
+            )
+
+        router = ProviderWaterfall(actual, secret, client_factory=factory(handler))
+        for _ in range(2):
+            upstream = await router.open({"messages": []})
+            assert upstream.route_id == "local"
+            await upstream.aclose()
+        assert requests == ["api.anthropic.com", "127.0.0.1", "127.0.0.1"]
+        assert router.status()["routes"][0]["credit_exhausted"] is True
+        router.reset()
+        mode = "other"
+        with pytest.raises(RoutingFailure, match="upstream_request_rejected"):
+            await router.open({"messages": []})
+        assert not router.status()["routes"][0]["credit_exhausted"]
+        mode = "overload"
+        upstream = await router.open({"messages": []})
+        await upstream.aclose()
+        state = router.status()["routes"][0]
+        assert state["reason"] == "temporary_unavailable" and not state["credit_exhausted"]
+        await router.aclose()
+
+        other = (RouteSpec("other", "https://other.invalid/v1/chat/completions", "h"),)
+        router = ProviderWaterfall(
+            other,
+            secret,
+            client_factory=factory(
+                lambda _: response(
+                    400,
+                    {
+                        "error": {
+                            "type": "invalid_request_error",
+                            "message": ("Your credit balance is too low to access the Anthropic "
+                                        "API."),
+                        }
+                    },
+                )
+            ),
+        )
+        with pytest.raises(RoutingFailure, match="upstream_request_rejected"):
+            await router.open({"messages": []})
+        assert not router.status()["routes"][0]["credit_exhausted"]
+        await router.aclose()
+
+    asyncio.run(run())
+
+
 def test_credit_skip_is_sticky_and_reset_reenables_without_losing_payload():
     async def run():
         requests = []

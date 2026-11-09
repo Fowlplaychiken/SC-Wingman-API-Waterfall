@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 import zipfile
 from pathlib import Path
 
@@ -14,13 +15,19 @@ def build(out: Path) -> Path:
     if out == ROOT or ROOT in out.parents:
         raise ValueError("Output directory must be outside the source checkout")
     source = ROOT / "provider_fallback_skill"
+    config = (source / "default_config.yaml").read_bytes()
+    match = re.search(rb"(?m)^version: ([0-9]+\.[0-9]+\.[0-9]+)\r?$", config)
+    if match is None:
+        raise ValueError("Explicit semantic skill version required")
+    version = match.group(1).decode("ascii")
+    namespace = "provider_fallback_skill_v" + version.replace(".", "_")
     files = {
         "__init__.py": b"",
         "main.py": (
-            b'"""Wingman loader entry point."""\n'
-            b"from provider_fallback_skill.skill import ProviderFallback\n"
+            b'"""Original Wingman loader entry point."""\n'
+            + f"from {namespace}.skill import ProviderFallback\n".encode()
         ),
-        "default_config.yaml": (source / "default_config.yaml").read_bytes(),
+        "default_config.yaml": config,
         "README.md": (ROOT / "README.md").read_bytes(),
         "LICENSE": (ROOT / "LICENSE").read_bytes(),
         "NOTICE.md": (source / "NOTICE.md").read_bytes(),
@@ -31,18 +38,16 @@ def build(out: Path) -> Path:
         ("routing.py", "routing.py"),
         ("server.py", "server.py"),
     ):
-        files["dependencies/provider_fallback_skill/" + package_name] = (
-            source / source_name
-        ).read_bytes()
+        files[f"dependencies/{namespace}/" + package_name] = (source / source_name).read_bytes()
     manifest = {
         "schema_version": 1,
         "name": "ProviderFallback",
-        "version": "0.1.0",
+        "version": version,
         "files": {name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())},
     }
     files["manifest.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
     out.mkdir(parents=True, exist_ok=False)
-    archive = out / "provider_fallback-0.1.0.zip"
+    archive = out / f"provider_fallback-{version}.zip"
     with archive.open("xb") as stream, zipfile.ZipFile(stream, "w") as bundle:
         for name, data in sorted(files.items()):
             info = zipfile.ZipInfo("provider_fallback/" + name, (1980, 1, 1, 0, 0, 0))

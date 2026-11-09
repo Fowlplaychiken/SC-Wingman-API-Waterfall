@@ -28,7 +28,7 @@ The routing and owned-listener checks pass. Actual Claude-compatible completion,
 
 ## Install and configure
 
-[Download the skill ZIP](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall/releases/latest/download/provider_fallback-0.1.0.zip) · [Source](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall)
+[Download the skill ZIP](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall/releases/latest/download/provider_fallback-0.1.1.zip) · [Source](https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall)
 
 1. Extract the release ZIP so `provider_fallback/default_config.yaml` is directly inside Wingman's `custom_skills` directory. On Windows this is normally `%APPDATA%\ShipBit\WingmanAI\custom_skills`. Avoid an extra nested ZIP folder.
 2. Fully restart Wingman after installing a new skill, so its startup compatibility catalogue sees it.
@@ -66,13 +66,16 @@ These tools are also available directly in Wingman's tools interface. A model li
 | Response | Behavior |
 | --- | --- |
 | Definite credit exhaustion / HTTP 402 | Skip that account for later requests until reset or relevant credential change |
-| HTTP 429 or 500/502/503/504 | Try the next route; temporary cooldown, not sticky credit exhaustion |
+| HTTP 429 or 500/502/503/504; Claude 529 overload | Try the next route; temporary cooldown, not sticky credit exhaustion |
 | Missing key, HTTP 401 or 404 | Skip the affected route until reset/configuration or credential repair |
 | Connection cannot be established | Try the next route; temporary cooldown |
 | Content/policy refusal or HTTP 403 | Return the refusal; do not route around it |
 | Ambiguous timeout, broken response or partial stream | Stop this request; do not silently replay it through another model |
 
 Only rejected requests before successful response headers can fall through. If a stream fails after starting, the module cannot truthfully know whether the provider finished processing; it does not duplicate that work elsewhere. If every route is unavailable, Wingman gets a redacted error rather than an invented answer. Exhaustion/cooldown state lives in memory; it is not a durable billing ledger.
+
+Version 0.1.1 also recognizes Claude's specific HTTP 400 low-credit response;
+other HTTP 400 errors remain terminal. See [Claude's error reference](https://platform.claude.com/docs/en/api/errors).
 
 Unrelated secret saves do not clear exhausted routes. Updating a configured provider's key clears the relevant route state; changing the bridge bearer restarts its owned listener. Provider billing still applies to API calls. There is no promise of free inference or universal protocol support.
 
