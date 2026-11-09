@@ -29,6 +29,7 @@ def build(out: Path) -> Path:
         ),
         "default_config.yaml": config,
         "README.md": (ROOT / "README.md").read_bytes(),
+        "CONFIGURATION.md": (ROOT / "CONFIGURATION.md").read_bytes(),
         "LICENSE": (ROOT / "LICENSE").read_bytes(),
         "NOTICE.md": (source / "NOTICE.md").read_bytes(),
     }
