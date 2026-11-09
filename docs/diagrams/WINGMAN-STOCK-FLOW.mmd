@@ -1,0 +1,14 @@
+flowchart TB
+  request["Your request: transcribed speech or typed text"] --> core
+  core["Core = application software; routing, context and orchestration"] -->|Request and context| main["Main model: reasoning, tools and answer"]
+  main --> response["Answer text and optional speech"]
+  core -->|Bounded decision request| jev["Decision model: Jev or configured alternative; commands, vocabulary, profile routing and explicit skill decisions"]
+  jev -->|Decision result; Core routes or executes| core
+  core -->|Memory, summary or explicit inexpensive job| support["Support model; separate from Main and Jev"]
+  support -->|Facts and summaries used in context| core
+  main -->|Tool request via Core interfaces| tools["Tools and skills"]
+  tools -->|Returned data via Core interfaces| main
+  note["Not every request invokes every role. A preselected command may still need a Main acknowledgement. Image-capable Main can read supplied screenshots."]
+
+%% Official Wingman 3.2.14, f0364106a9ea13eb5aee45f73cd9af86c79cd213.
+%% Simplified logical flow, not a process, thread, timing or complete-service map.
