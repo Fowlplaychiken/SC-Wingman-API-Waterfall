@@ -9,6 +9,7 @@ flowchart TD
   reply --> tts[Speech synthesis]
   core -. background work .-> support[Support: memory and summaries]
   tools -. explicit inexpensive work .-> support
+  support -. summaries and compressed results .-> tools
   tools -. explicit main-model side call .-> main
   core -. enabled bounded choices .-> jev[Decision model: Jev]
   jev -. decision result .-> core

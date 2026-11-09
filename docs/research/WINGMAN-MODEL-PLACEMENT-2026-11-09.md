@@ -32,6 +32,14 @@ preserves the required facts. Hosted Support can instead spare GPU memory and
 avoid contention with a local Main fallback. The best placement depends on
 measured workload, privacy preferences, available hardware and allowance.
 
+The local model's Main benchmark latency does not measure its different Support
+jobs. A hosted Support service may be faster despite network overhead, or slower;
+neither follows from where it runs. To establish whether stronger Support
+improves final answers, hold Main, Jev, task inputs and tools fixed, vary only
+Support, and score both intermediate memory/compression fidelity and downstream
+answer/tool correctness. Include background completion and any foreground wait.
+Do not infer this causal benefit from our existing Main-only cohort.
+
 ## What the Free plan and Vercel establish
 
 Wingman's current [pricing page](https://www.wingman-ai.com/pricing) describes a
