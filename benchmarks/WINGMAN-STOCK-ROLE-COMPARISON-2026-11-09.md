@@ -1,5 +1,7 @@
 # Wingman stock-role comparison — 9 November 2026
 
+**Later same-day follow-up:** The [actual hosted Support and short-history comparison](WINGMAN-SUPPORT-FOLLOWUP-2026-11-09.md) identifies GLM 5.3 Flash as the served Free-plan default and verifies optional hosted Haiku. The earlier matrix below remains a separate frozen cohort; direct Anthropic BYOK Support and full native qualification are still distinct from the supported Wingman-hosted route.
+
 In this small synthetic replay, Haiku Main with Haiku Support matched **21 of 24** task references, with or without the stock Jev decision stage. Qwen Main with Qwen Support matched **14 of 24**. These are development-fixture results, not a general intelligence ranking or an installed Wingman or gameplay qualification. Haiku Support retained the required facts in **8 of 8** standalone summaries; Qwen Support did so in **3 of 8**. The experiment supports further evaluation of Haiku as a Support candidate, not a configuration change.
 
 ![Main and Support speed, task success and cost comparison](WINGMAN-STOCK-ROLE-COMPARISON-2026-11-09.png)
