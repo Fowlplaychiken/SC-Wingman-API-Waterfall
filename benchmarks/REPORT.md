@@ -1,5 +1,13 @@
 # Wingman provider comparison — 9 November 2026
 
+One corrected-fixture follow-up is separate from the frozen chart: SC Radio's
+documented default makes an omitted station offset equivalent to integer zero.
+Luna 5.6 + Jev then listed the frozen stations, waited for the user's choice and
+proposed exactly HCN without claiming playback. The complete loop took 4.66
+seconds, with reported API cost $0.000636246 including both Jev calls. The
+original unknown and the 480-run chart are unchanged. This does not alter the
+selected Haiku/Qwen order or establish a new full-cohort score.
+
 The [paired comparison](WINGMAN-JEV-PAIRED-COMPARISON.json) contains 480 attempted case-runs across 10 model settings with and without Jev. It includes 384 new results and 96 reused direct controls. Each setting and mode has 24 frozen simulated tasks; tools return canned data and no game action is executed.
 
 ![Paired Jev comparison](WINGMAN-JEV-PAIRED-COMPARISON.png)
