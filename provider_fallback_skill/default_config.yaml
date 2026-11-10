@@ -1,7 +1,7 @@
 module: skills.provider_fallback.main
 name: ProviderFallback
 api_version: 3
-version: 0.4.3
+version: 0.4.4
 display_name: Provider fallback
 author: Star Citizen Computer contributors
 description:

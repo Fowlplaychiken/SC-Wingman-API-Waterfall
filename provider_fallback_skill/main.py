@@ -282,6 +282,10 @@ class ProviderFallback(Skill):
         self._router = None
 
     async def _start(self):
+        try:
+            from services.token_utils import count_tokens
+        except ImportError:
+            count_tokens = None
         errors = []
         port, bridge_name, specs = self._settings(errors)
         support_enabled, support_port, support_specs = self._support_settings()
@@ -317,6 +321,7 @@ class ProviderFallback(Skill):
                 resolve,
                 assistance=NativeJevAssist(getattr(self.wingman, "system_one", None)),
                 account_health=account_health,
+                token_counter=count_tokens,
                 on_event=lambda event: self._on_event(event, generation, holder["router"]),
             )
             holder["router"] = self._router
@@ -331,6 +336,7 @@ class ProviderFallback(Skill):
                 resolve,
                 role="support",
                 account_health=account_health,
+                token_counter=count_tokens,
                 on_event=lambda event: self._on_event(event, generation, support_holder["router"]),
             )
             support_holder["router"] = self._support_router

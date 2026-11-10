@@ -14,6 +14,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from .context_budget import ContextBudgetError, apply_budget, validate_budget
 from .native_messages import NativeMessagesError, from_native, to_native
 
 
@@ -34,6 +35,9 @@ class RouteSpec:
     request_overrides: dict = field(default_factory=dict)
     final_local: bool = False
     wire_protocol: str = "openai_chat"
+    context_window: int | None = None
+    max_output_tokens: int = 4096
+    tool_reserve_tokens: int = 8192
     jev_assist: bool = False
     jev_min_confidence: float = 0.8
     omit_request_fields: tuple[str, ...] = ()
@@ -45,6 +49,9 @@ class RouteSpec:
     )
 
     def __post_init__(self):
+        validate_budget(self.context_window, self.max_output_tokens, self.tool_reserve_tokens)
+        if self.wire_protocol == "wingman_support" and self.context_window is not None:
+            raise ValueError("Wingman manages its hosted Support context limits")
         url = urlsplit(self.endpoint)
         if (
             not re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", self.route_id)
@@ -149,6 +156,7 @@ class ProviderWaterfall:
         on_event=None,
         role="main",
         account_health=None,
+        token_counter=None,
     ):
         self.routes = tuple(routes)
         if (
@@ -184,6 +192,8 @@ class ProviderWaterfall:
         self._closed = False
         self.assistance = assistance
         self.on_event = on_event
+        self.token_counter = token_counter
+        self._last_budget = None
         self._last_selected_route = None
         self._last_failure = None
 
@@ -257,6 +267,7 @@ class ProviderWaterfall:
                 "closed": self._closed,
                 "last_selected_route": self._last_selected_route,
                 "last_failure": self._last_failure,
+                "last_budget": self._last_budget,
                 "notification_failed": getattr(self, "_notification_failed", False),
                 "routes": [
                     {
@@ -264,6 +275,9 @@ class ProviderWaterfall:
                         "model": r.model,
                         "final_local": r.final_local,
                         "wire_protocol": r.wire_protocol,
+                        "context_window": r.context_window,
+                        "max_output_tokens": r.max_output_tokens if r.context_window else None,
+                        "tool_reserve_tokens": r.tool_reserve_tokens if r.context_window else None,
                         "jev_assist": r.jev_assist,
                         "fallback_on": list(r.fallback_on),
                         "credit_exhausted": self._account(r) in self._exhausted,
@@ -428,6 +442,24 @@ class ProviderWaterfall:
                                 "presence_penalty",
                             }
                         }
+                try:
+                    body, budget = apply_budget(
+                        body, route.context_window, route.max_output_tokens,
+                        route.tool_reserve_tokens, token_counter=self.token_counter,
+                    )
+                except ContextBudgetError as exc:
+                    with self._lock:
+                        self._last_budget = {"route_id": route.route_id, **exc.report}
+                    error = self._terminal(route, 400, exc.code, request_id)
+                    error.budget = exc.report
+                    raise error from None
+                except (ValueError, TypeError):
+                    raise self._terminal(
+                        route, 400, "invalid_context_budget_request", request_id
+                    ) from None
+                if budget is not None:
+                    with self._lock:
+                        self._last_budget = {"route_id": route.route_id, **budget}
                 request = client.build_request("POST", route.endpoint, headers=headers, json=body)
                 response = await client.send(request, stream=True)
                 status = response.status_code

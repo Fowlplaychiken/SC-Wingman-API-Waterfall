@@ -61,21 +61,28 @@ def create_app(router, bearer, *, request_limit_bytes=8 * 1024 * 1024, support_o
     @app.exception_handler(RoutingFailure)
     async def failed(_request, error):
         detail = {"code": error.code}
+        if error.code == "context_budget_exceeded":
+            detail["message"] = (
+                "This request exceeds the selected route's configured input budget. "
+                "Shorten the conversation or review that model's context and reserves. "
+                "No messages were discarded or sent to this provider."
+            )
+        elif error.code == "reply_budget_below_thinking_budget":
+            detail["message"] = "The reply limit must exceed the configured thinking budget."
+        if getattr(error, "budget", None) is not None:
+            detail["budget"] = error.budget
         if error.request_id:
             detail["request_id"] = error.request_id
         return JSONResponse({"error": detail}, status_code=error.status)
 
     @app.get("/v1/models")
     async def models():
-        return {
-            "object": "list",
-            "data": [
-                {
-                    "id": "local-model" if support_only else "waterfall",
-                    "object": "model",
-                }
-            ],
-        }
+        data = [{"id": "local-model" if support_only else "waterfall", "object": "model"}]
+        routes = getattr(router, "routes", ())
+        if not support_only and routes and routes[0].context_window is not None:
+            # This is the real primary model, not a name invented to force Core's table.
+            data.append({"id": routes[0].model, "object": "model"})
+        return {"object": "list", "data": data}
 
     @app.get("/status")
     async def status():

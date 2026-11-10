@@ -184,6 +184,106 @@ def test_fresh_setup_is_inactive_and_does_not_mutate_before_preview_and_apply(tm
     _run(scenario())
 
 
+@pytest.mark.parametrize("role", ["main", "support"])
+@pytest.mark.parametrize("custom", [False, True])
+def test_context_limits_preview_snapshot_apply_and_scoped_undo(tmp_path, role, custom):
+    async def scenario():
+        core = FakeCore()
+        engine = core.engine(tmp_path / "backup.json")
+        before = copy.deepcopy(core.profile)
+        plan = _plan(**{role: True})
+        route = plan[role]["routes"][0]
+        route.update(context_window=32768, request_overrides={"temperature": 0.2})
+        if custom:
+            route.update(max_output_tokens=2048, tool_reserve_tokens=0)
+        preview = await engine.preview(plan)
+        shown = preview["changes"][0]["order"][0]
+        assert shown["context_window"] == 32768
+        assert shown["max_output_tokens"] == (2048 if custom else 4096)
+        assert shown["tool_reserve_tokens"] == (0 if custom else 8192)
+        assert core.profile_saves == core.settings_saves == 0
+        plan["preview_id"] = preview["preview_id"]
+        await engine.apply(plan)
+        assert (await engine.snapshot())[role]["routes"] == [route]
+        await engine.undo()
+        assert core.profile == before
+
+    _run(scenario())
+
+
+def test_stock_preview_omits_optional_context_limits(tmp_path):
+    async def scenario():
+        core = FakeCore()
+        preview = await core.engine(tmp_path / "backup.json").preview(_plan(main=True))
+        shown = preview["changes"][0]["order"][0]
+        assert not {"context_window", "max_output_tokens", "tool_reserve_tokens"} & shown.keys()
+
+    _run(scenario())
+
+
+@pytest.mark.parametrize(
+    "model,configured,expected",
+    [
+        ("claude-haiku-5-5", True, "claude-haiku-5-5"),
+        ("owner-unknown-model", True, "owner-unknown-model"),
+        ("claude-haiku-5-5", False, "waterfall"),
+    ],
+)
+def test_main_core_model_uses_exact_primary_id_only_with_a_window(
+    tmp_path, model, configured, expected,
+):
+    async def scenario():
+        core = FakeCore()
+        engine = core.engine(tmp_path / "backup.json")
+        plan = _plan(main=True)
+        first = plan["main"]["routes"][0]
+        first["model"] = model
+        if configured:
+            first["context_window"] = 32768
+        preview = await engine.preview(plan)
+        assert preview["changes"][0]["core_conversation_model"] == expected
+        plan["preview_id"] = preview["preview_id"]
+        await engine.apply(plan)
+        assert core.profile["local_llm"] == {
+            "endpoint": "http://127.0.0.1:48141/v1", "conversation_model": expected,
+        }
+        assert (await engine.snapshot())["main"]["routes"][0]["model"] == model
+
+    _run(scenario())
+
+
+def test_changed_context_budget_requires_a_fresh_preview(tmp_path):
+    async def scenario():
+        core = FakeCore()
+        engine = core.engine(tmp_path / "backup.json")
+        plan = _plan(main=True)
+        plan["main"]["routes"][0].update(context_window=32768, max_output_tokens=4096,
+                                          tool_reserve_tokens=8192)
+        plan["preview_id"] = (await engine.preview(plan))["preview_id"]
+        plan["main"]["routes"][0]["tool_reserve_tokens"] = 4096
+        with pytest.raises(SetupError, match="preview_again_settings_changed"):
+            await engine.apply(plan)
+        assert not [call for call in core.calls if call[0] == "POST"]
+
+    _run(scenario())
+
+
+def test_hosted_support_cannot_preview_custom_context_limits(tmp_path):
+    async def scenario():
+        core = FakeCore()
+        engine = core.engine(tmp_path / "backup.json")
+        plan = _plan(support=True)
+        plan["support"]["routes"][0].update(
+            endpoint="https://api.wingman-ai.com/api/v1/support/completions",
+            wire_protocol="wingman_support", context_window=32768,
+        )
+        with pytest.raises(SetupError, match="invalid_provider_route"):
+            await engine.preview(plan)
+        assert not [call for call in core.calls if call[0] == "POST"]
+
+    _run(scenario())
+
+
 def test_main_apply_preserves_unselected_support_and_other_profile_settings(tmp_path):
     async def scenario():
         core = FakeCore()

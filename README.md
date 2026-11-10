@@ -30,6 +30,14 @@ Setup handles internal connection details. Provider keys never enter the page. A
 
 Support is optional: current Wingman server mode also uses remote embeddings. Configure a compatible remote embedding endpoint in Wingman first, or leave Support unchanged. Main does not need it. See the [manual alternative](CONFIGURATION.md) for custom configuration.
 
+## Context and reply limits
+
+In setup, expand **Context and reply limits (optional)** for a BYOK or local model. Enter the context size actually available from that provider/server, the maximum reply, and room for tool results. Leave the fields blank to keep existing behavior. Wingman-hosted Support keeps Wingman's limits.
+
+Tool-result continuations can use the reserved room. Waterfall does not silently delete messages to make a smaller fallback fit. If a request cannot fit, it explains the limit instead. Input counts are padded estimates, not exact provider billing counts.
+
+When Main has a configured context size, setup uses its real primary model ID so Wingman can apply its normal model-aware budget. Core still uses its own model table; unknown models retain its conservative default. These settings cannot increase Core's or a provider's actual limit.
+
 ## Before you enable a route
 
 Provider calls may incur charges. Fallback depends on the role's policy and the failure type; a refusal, uncertain timeout, or interrupted stream is not replayed through another provider. Waterfall does not report provider billing totals. Review the [route and failure details](CONFIGURATION.md#fallback-and-billing) before enabling automatic fallback.
