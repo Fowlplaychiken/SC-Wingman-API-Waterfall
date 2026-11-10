@@ -204,10 +204,23 @@ class SetupEngine:
                                 "model": r["model"],
                                 "endpoint": r["endpoint"],
                                 "secret_name": r.get("secret_name"),
+                                **(
+                                    {
+                                        "context_window": r["context_window"],
+                                        "max_output_tokens": r.get("max_output_tokens", 4096),
+                                        "tool_reserve_tokens": r.get("tool_reserve_tokens", 8192),
+                                    }
+                                    if r.get("context_window") is not None
+                                    else {}
+                                ),
                             }
                             for r in plan[role]["routes"]
                         ],
                         "fallback": plan[role]["mode"],
+                        **(
+                            {"core_conversation_model": self._main_model(plan)}
+                            if role == "main" else {}
+                        ),
                     }
                 )
         return {
@@ -219,6 +232,11 @@ class SetupEngine:
                 "scheduling and embedding identity stay unchanged."
             ),
         }
+
+    @staticmethod
+    def _main_model(plan):
+        first = plan["main"]["routes"][0]
+        return first["model"] if first.get("context_window") is not None else "waterfall"
 
     @staticmethod
     def _guard(state, plan):
@@ -343,7 +361,7 @@ class SetupEngine:
                     "provider": "local_llm",
                     "local_llm": {
                         "endpoint": f"http://127.0.0.1:{values.get('listen_port', 4141)}/v1",
-                        "conversation_model": "waterfall",
+                        "conversation_model": self._main_model(plan),
                     },
                 }
             if "support" in roles:

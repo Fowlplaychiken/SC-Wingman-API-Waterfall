@@ -97,3 +97,16 @@ Native `anthropic_messages` routes accept nonstreaming requests. Base64 JPEG/PNG
 ## Return to stock providers
 
 Before disabling Provider fallback or removing its skill, restore the original Core conversation provider and Support Model settings. Turning a Waterfall role off does not rewrite Core's selected endpoint, secret reference, or provider mode. Retain the profile backup and previous skill package until the stock settings work again.
+
+
+## Optional context budgets
+
+Each BYOK/local route may include `context_window`, `max_output_tokens` and `tool_reserve_tokens`. These are positive integer tokens except tool reserve, which may be zero. Reply plus reserve must be smaller than the configured window. Defaults with an enabled window are a 4,096-token reply cap and 8,192 tokens for tool results. An absent window disables this feature; existing configurations remain unchanged. The hosted `wingman_support` protocol does not accept these settings.
+
+Use the actual served capacity: for a local server, its configured context may be much smaller than the model's advertised training context. Provider/model hard limits still apply. Main and Support have independent routes and budgets. No Core files change.
+
+The initial input allowance is `window - effective reply cap - tool reserve`; an actual tool-result continuation can use `window - effective reply cap`. The effective reply cap is the smaller of the configured cap and any requested cap. Tool definitions, native system prompts and tool results count as input. Explicit thinking budgets must fit inside the reply cap. No history, tool pair or system instruction is silently removed.
+
+The normal installed counter reuses Wingman's tokenizer, with 10 percent padding and 64 structural tokens. When it is unavailable, UTF-8 byte length plus 64 is a conservative fallback estimate. These are preflight estimates, not exact counts for every provider, image or tokenizer. Overflows are returned explicitly, not silently retried on another model or treated as a credit failure. Budget metadata contains counts only, never request bodies or keys.
+
+With a configured primary Main window, guided setup advertises/selects that route's exact model ID in Core. The old `waterfall` alias remains accepted. Wingman infers its own budget from its model table; arbitrary Waterfall limits are not a Core context override. Unknown model IDs may therefore retain Core's 32,000-token estimate. A smaller fallback is separately checked before its request is sent. If the larger conversation cannot fit, it fails clearly rather than losing context. Setup Preview shows the model selection, and Undo restores the previous alias and routes.

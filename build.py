@@ -63,6 +63,7 @@ def build(out: Path) -> Path:
         ("main.py", "skill.py"),
         ("__init__.py", "__init__.py"),
         ("routing.py", "routing.py"),
+        ("context_budget.py", "context_budget.py"),
         ("server.py", "server.py"),
         ("native_messages.py", "native_messages.py"),
         ("jev_assist.py", "jev_assist.py"),
