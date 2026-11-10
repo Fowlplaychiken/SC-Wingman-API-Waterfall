@@ -8,6 +8,32 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+PUBLIC_BASE = "https://github.com/Fowlplaychiken/SC-Wingman-API-Waterfall/blob/NewRepo/"
+PUBLIC_RAW_BASE = "https://raw.githubusercontent.com/Fowlplaychiken/SC-Wingman-API-Waterfall/NewRepo/"
+
+
+def _public_readme(data: bytes) -> bytes:
+    """Make repository-only README links usable from the standalone ZIP."""
+    def rewrite(match: re.Match[bytes]) -> bytes:
+        destination = match.group(1)
+        if destination.startswith(b"docs/diagrams/"):
+            target = PUBLIC_RAW_BASE.encode() + destination
+        elif destination in {
+            b"benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png",
+            b"benchmarks/WINGMAN-SUPPORT-24.png",
+        }:
+            target = PUBLIC_RAW_BASE.encode() + destination
+        elif destination.startswith(b"docs/MODEL-ROLES.md"):
+            target = (PUBLIC_BASE + "docs/MODEL-ROLES.md").encode() + destination[
+                len(b"docs/MODEL-ROLES.md") :
+            ]
+        elif destination.startswith(b"benchmarks/"):
+            target = (PUBLIC_BASE + "benchmarks/").encode() + destination[len(b"benchmarks/") :]
+        else:
+            target = destination
+        return b"](" + target + b")"
+
+    return re.sub(rb"\]\(([^)\s]+)\)", rewrite, data)
 
 
 def build(out: Path) -> Path:
@@ -28,7 +54,7 @@ def build(out: Path) -> Path:
             + f"from {namespace}.skill import ProviderFallback\n".encode()
         ),
         "default_config.yaml": config,
-        "README.md": (ROOT / "README.md").read_bytes(),
+        "README.md": _public_readme((ROOT / "README.md").read_bytes()),
         "CONFIGURATION.md": (ROOT / "CONFIGURATION.md").read_bytes(),
         "LICENSE": (ROOT / "LICENSE").read_bytes(),
         "NOTICE.md": (source / "NOTICE.md").read_bytes(),
@@ -40,6 +66,9 @@ def build(out: Path) -> Path:
         ("server.py", "server.py"),
         ("native_messages.py", "native_messages.py"),
         ("jev_assist.py", "jev_assist.py"),
+        ("setup_engine.py", "setup_engine.py"),
+        ("setup_web.py", "setup_web.py"),
+        ("setup.html", "setup.html"),
     ):
         files[f"dependencies/{namespace}/" + package_name] = (source / source_name).read_bytes()
     manifest = {

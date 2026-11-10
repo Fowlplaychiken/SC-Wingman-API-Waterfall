@@ -1,0 +1,8 @@
+flowchart LR
+    U[Your request] --> C[Core software]
+    C --> M[Main model: preferred → eligible fallback]
+    M --> A[Your response]
+    C <--> J[Stock decision model: Jev or alternative]
+    C <--> S[Support model: preferred → eligible fallback]
+    M <--> T[Tools and modules via Core]
+    N[Main and Support chains are optional and independently configured]

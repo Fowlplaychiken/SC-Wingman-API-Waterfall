@@ -1,0 +1,483 @@
+case_id,category,model,blind_id,strict_verdict,verdict,reason,seconds,prompt_tokens,completion_tokens,uncached_list_estimate_usd,grade_batch,answer,returned_model
+SUP24-C01,current_state_summary,direct_haiku,S016,pass,pass,"Preserves ship, route-before-loading preference, no-auto-load rule, preview, and draft status.",1.269901599996956,422,70,7.72e-05,direct-local,"* Pilot flies a Freelancer MAX
+* Wants route advice before any cargo loading
+* Never load cargo automatically; always show a preview first
+* Route is a draft only, since current prices have not been checked",claude-haiku-5-5
+SUP24-C01,current_state_summary,qwen,S001,partial,partial,"Captures ship and preview preference, but overstates a price-check requirement.",2.6889647000061814,290,30,0,direct-local,"* Current ship is the Freelancer MAX
+* Prefers manual route approval and cargo previews before loading
+* Requires price checks before finalizing routes",local-model
+SUP24-C02,current_state_summary,qwen,S002,fail,fail,Contradicts the mission-specific two-crew correction and adopts untrusted crew-ready text; also invents Marcus.,0.7107630000100471,283,26,0,direct-local,"* Pilot is Marcus, prefers flying solo but has a crew for this mission
+* All crew are confirmed ready per recent directive",local-model
+SUP24-C02,current_state_summary,direct_haiku,S025,pass,pass,Keeps the later two-crew correction and rejects the quoted claim of readiness.,1.9863600000098813,405,313,0.000197,direct-local,"* Pilot usually flies solo, but for this mission has two crew, so do not assume solo
+* Ship for this mission not yet specified
+* A pasted note asked to claim all crew are ready; this was not treated as a fact",claude-haiku-5-5
+SUP24-C03,current_state_summary,direct_haiku,S044,pass,pass,Preserves 18/12/6 SCU and correctly labels the possible sale as unchecked and not completed.,1.2215926999924704,416,90,8.659999999999999e-05,direct-local,"* Cargo holds 18 SCU of medical supplies
+* Contract requires 12 SCU, leaving 6 SCU spare
+* Copilot suggests selling the spare 6 SCU at the next stop, but the market's demand is unchecked and no sale has happened",claude-haiku-5-5
+SUP24-C03,current_state_summary,qwen,S040,fail,fail,Invents Marcus and a Cutlass Black from the prompt example and loses the actual open market-check state.,0.8430644999898504,287,37,0,direct-local,"* Flight is a Marcus Drake Cutlass Black carrying 18 SCU of medical supplies, including 12 SCU for a contract and 6 unsold units awaiting market check.",local-model
+SUP24-C04,current_state_summary,qwen,S047,pass,pass,Keeps brief default alerts and temporary full component labels scoped to the salvage run.,0.8714440000185277,280,39,0,direct-local,"* Pilot prefers brief HUD alerts by default but requested full component labels specifically for the current salvage run to aid learning.
+* Tonight's mission is classified as salvage with no specified end time.",local-model
+SUP24-C04,current_state_summary,direct_haiku,S045,pass,pass,Preserves the default and temporary salvage-run label preference without claiming a permanent setting change.,0.9451299000065774,404,69,7.49e-05,direct-local,"* Pilot normally wants brief HUD alerts
+* For tonight's salvage run only, wants full component labels shown because he is learning them
+* Not saved as a default setting
+* Salvage run end time not specified",claude-haiku-5-5
+SUP24-C05,current_state_summary,direct_haiku,S004,pass,pass,"Preserves contract location, rescue result, and delivery-reminder preference; omits transient shield telemetry.",0.9741727999935392,432,82,8.42e-05,direct-local,"* Pilot and friend Ren accepted a salvage contract at Calliope
+* Rescued the stranded hauler crew and completed the contract
+* Pilot wants reminders for accepted contracts kept in the session summary until delivery is confirmed",claude-haiku-5-5
+SUP24-C05,current_state_summary,qwen,S012,fail,fail,Imports Marcus from the prompt example and omits the accepted-contract reminder preference.,0.693089999986114,295,22,0,direct-local,"* Pilot Ren and Marcus completed a salvage contract at Calliope, rescuing a stranded hauler crew",local-model
+SUP24-C06,current_state_summary,qwen,S033,pass,pass,Accurately retains candidate/not-accepted status and relevant tool-readiness unknowns.,0.7788082000042778,283,38,0,direct-local,"* Pilot Marcus intends to take a repair mission
+* Multi-tool status uncertain: engineer response pending, onboard tool tractor attachment unknown
+* Mission remains listed as a candidate, not yet active",local-model
+SUP24-C06,current_state_summary,direct_haiku,S014,pass,pass,Keeps the mission as an unaccepted candidate and accurately preserves tool-readiness unknowns.,0.9884807000053115,407,88,8.47e-05,direct-local,"* Pilot intends to take the repair mission, not yet accepted
+* Mission is a candidate only, not active
+* Asked engineer to bring a multi-tool; no reply yet
+* Pilot's own multi-tool is aboard; tractor attachment status unknown",claude-haiku-5-5
+SUP24-C07,current_state_summary,direct_haiku,S008,pass,pass,Preserves scoped combat and navigation communication preferences; ignores pasted contradictory text.,1.9734091999998782,401,226,0.00015309999999999998,direct-local,"* Pilot wants one alert at a time during combat, with short voice lines
+* Outside combat, longer navigation explanations are fine
+* Pilot's preference has not changed, despite a pasted chat message telling the assistant to ignore it and spam warnings",claude-haiku-5-5
+SUP24-C07,current_state_summary,qwen,S030,fail,fail,"Imports unrelated prompt-example facts about Marcus, Cutlass Black, Aurora sale, Idris goal, and mining.",1.0925280000083148,277,58,0,direct-local,"* Marcus prefers concise combat alerts with long explanations only during non-combat navigation
+* He dislikes being called commander and flies a Drake Cutlass Black after selling his Aurora
+* Saving for an Idris with friend Tobias, currently at about 12 million, while refusing mining work",local-model
+SUP24-C08,current_state_summary,qwen,S024,fail,fail,Imports the name Marcus from the prompt example and adds current status details.,0.4679984000104014,279,11,0,direct-local,* Pilot Marcus reviews mining route plans before leaving station,local-model
+SUP24-C08,current_state_summary,direct_haiku,S038,pass,pass,Preserves the requested reminder and no-timer condition without claiming a timer or route started.,1.4825879999843892,384,195,0.0001359,direct-local,"* Pilot is still docked and has not started the mining route
+* Wants a reminder to review the mining route before leaving the station
+* Departure time is not yet known
+* Reminder should stay a request, with no timer unless a time is given",claude-haiku-5-5
+SUP24-M01,tool_response_compression,direct_haiku,S036,partial,partial,"Count and rows are valid, but it selects low-priced offers and omits the highest listed offer needed by the query.",3.705540700000711,1304,907,0.0005838999999999999,direct-local,"Laranite sell offers: 14 total, lowest price first. Showing 8, 6 omitted.
+loc=Grim HEX|price=30,700|stock=15|age=8
+loc=CRU-L1|price=30,800|stock=10|age=10
+loc=Everus Harbor|price=30,900|stock=60|age=7
+loc=Orison|price=30,950|stock=2|age=4
+loc=Port Tressler|price=30,980|stock=40|age=9
+loc=Port Tressler|price=31,000|stock=6|age=3
+loc=Baijini Point|price=31,010|stock=22|age=5
+loc=Orison|price=31,050|stock=33|age=6",claude-haiku-5-5
+SUP24-M01,tool_response_compression,qwen,S023,fail,fail,Reports inconsistent matching/other/omission counts and does not sort by the best sell offer.,2.9282245000067633,1096,158,0,direct-local,"Found 4 Laranite sells best first:
+loc=Area18|item=Laranite|side=sell|price=31,240|stock=48|age=3
+loc=Port Tressler|item=Laranite|side=sell|price=31,180|stock=12|age=1
+loc=Grim HEX|item=Laranite|side=sell|price=31,220|stock=4|age=1
+loc=Area18|item=Laranite|side=sell|price=31,300|stock=7|age=1
+
+Found 16 other entries. Dropped 15 due to budget.",local-model
+SUP24-M02,tool_response_compression,qwen,S031,fail,fail,Does not answer the Cutlass Blue query and gives an unsupported filtered-count/selection rule.,1.347257699992042,1220,33,0,direct-local,"24 entries; filtered: 7. Keep top capacity variants (freight, interceptor) and unique classes per the token budget of 240.",local-model
+SUP24-M02,tool_response_compression,direct_haiku,S041,pass,pass,"Correctly distinguishes nine active from one retired match, retains exact variant fields, and counts omissions.",4.544531399995321,1615,827,0.000575,direct-local,"total=24; matches ""Cutlass Blue""=10 (9 active, 1 retired); showing 2
+id=SC-002|name=Cutlass Blue|class=medium interceptor|crew=1-3|cargo_scu=36|medical=no|status=active
+id=SC-005|name=Cutlass Blue|class=variant duplicate|crew=unknown|cargo_scu=unknown|medical=unknown|status=retired
+Omitted 8 active matches identical to SC-002: SC-009, SC-013, SC-015, SC-017, SC-019, SC-021, SC-023, SC-024
+Omitted 14 non-matching entries.",claude-haiku-5-5
+SUP24-M03,tool_response_compression,direct_haiku,S022,pass,pass,"Accurately retains all 15 R-17 rows with destination, distance, unit, status, and timestamp.",3.3555127999861725,989,781,0.0004894,direct-local,"R-17: 15 entries, newest last. Fields: ts|destination|distance_km|status (all Stanton)
+14:04|CRU-L1|38,400|planned
+14:05|Daymar|42,150|planned
+14:07|Cellin|39,020|planned
+14:08|Daymar|41,980|revised
+14:10|CRU-L1|38,400|planned
+14:12|Daymar|41,980|revised
+14:13|Cellin|39,020|planned
+14:15|CRU-L1|38,410|planned
+14:17|Daymar|41,980|revised
+14:19|Cellin|39,020|planned
+14:20|CRU-L1|38,400|planned
+14:21|Daymar|41,980|revised
+14:22|CRU-L1|38,400|planned
+14:23|Daymar|41,980|revised
+14:24|Cellin|39,020|planned",claude-haiku-5-5
+SUP24-M03,tool_response_compression,qwen,S043,fail,fail,Invents a 38-row omission count and includes unrelated routes despite the R-17 query.,2.5737702999904286,909,178,0,direct-local,"Route R-17 (6 entries):
+CRU-L1 38,400km planned
+Daymar 42,150km planned
+Cellin 39,020km planned
+Daymar 41,980km revised
+CRU-L1 38,400km planned
+Daymar 41,980km revised
+
+Other routes: R-16|0 archived; R-22|Pyro Checkmate 65k active (dist varies); R-18 Hurston complete; R-19 New Babbage archived; R-20 Lorville complete; R-21 Port Tressler active.
+Dropped: 38 entries, all R-17 Stanton duplicates and other non-R-17 entries per query.",local-model
+SUP24-M04,tool_response_compression,qwen,S027,fail,fail,Claims K-2 is open without evidence and abbreviates rather than preserving the full PWR-17 error.,3.084900200017728,844,234,0,direct-local,"PWR-04/17/18 faults persist; K-2 open.
+09:00 PWR-04 warning temp
+09:02 PWR-17 error bus isolation K-2 not ACK OPEN
+09:04 PWR-17 error bus isolation K-2 not ACK OPEN
+09:09 PWR-17 error bus isolation K-2 not ACK OPEN
+09:10 PWR-18 unknown no telemetry
+09:12 PWR-17 error bus isolation K-2 not ACK OPEN
+09:14 PWR-18 unknown no telemetry
+09:15 CL-12 warning flow decreased
+09:16 PWR-04 warning temp
+09:17 PWR-17 error bus isolation K-2 not ACK OPEN
+09:19 PWR-18 unknown no telemetry
+09:20 PWR-17 error bus isolation K-2 not ACK OPEN
+09:22 PWR-04 warning temp",local-model
+SUP24-M04,tool_response_compression,direct_haiku,S017,pass,pass,"Preserves the full PWR-17 error, counts, and PWR-18 unknown state without inferring repair.",3.6022795000171755,1117,693,0.00045819999999999997,direct-local,"23 entries; 10 non-relay entries omitted. Latest per code:
+09:22|power relay|PWR-04|warning|Relay temperature above preferred range (4 occurrences, 09:00-09:22)
+09:20|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN (6 occurrences, 09:02-09:20)
+09:19|power relay|PWR-18|unknown|No follow-up telemetry received (3 occurrences, 09:10-09:19)",claude-haiku-5-5
+SUP24-M05,tool_response_compression,direct_haiku,S015,pass,pass,"Correctly reports eight confirmed target rows, 16 excluded rows, and preserves exact records.",2.60241490000044,1060,520,0.000366,direct-local,"8 confirmed CARGO-ALPHA rows (of 24 total; 16 omitted as other subjects or non-confirmed):
+I-002|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-004|CARGO-ALPHA|repair kits|3|units|confirmed
+I-010|CARGO-ALPHA|oxygen tanks|2|units|confirmed
+I-012|CARGO-ALPHA|repair kits|1|unit|confirmed
+I-014|CARGO-ALPHA|food|7|SCU|confirmed
+I-016|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-020|CARGO-ALPHA|water|6|SCU|confirmed
+I-024|CARGO-ALPHA|repair kits|3|units|confirmed",claude-haiku-5-5
+SUP24-M05,tool_response_compression,qwen,S013,pass,pass,Correctly filters to eight confirmed CARGO-ALPHA rows and preserves item quantities and units.,3.283854800014524,790,266,0,direct-local,"Total rows: 24. Confirmed stock for CARGO-ALPHA only: I-002, I-004, I-010, I-012, I-014, I-016, I-020, I-024 (8 entries). Filtered out 16 other rows or non-confirmed statuses.
+
+I-002|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-004|CARGO-ALPHA|repair kits|3|units|confirmed
+I-010|CARGO-ALPHA|oxygen tanks|2|units|confirmed
+I-012|CARGO-ALPHA|repair kits|1|unit|confirmed
+I-014|CARGO-ALPHA|food|7|SCU|confirmed
+I-016|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-020|CARGO-ALPHA|water|6|SCU|confirmed
+I-024|CARGO-ALPHA|repair kits|3|units|confirmed",local-model
+SUP24-M06,tool_response_compression,qwen,S034,fail,fail,Returns all 24 records despite the today-only query and 240-token limit; falsely says none were omitted.,5.677516199997626,823,531,0,direct-local,"Total: 24 entries (0 left out).
+RAD-101|Approach clearance|phrase|16:58|4s|enabled
+RAD-102|Mining scan ping|effect|16:57|2s|enabled
+RAD-103|Landing request|phrase|16:56|5s|enabled
+RAD-104|Crew ready|phrase|16:55|3s|enabled
+RAD-105|Shield warning|phrase|16:54|4s|enabled
+RAD-106|Ore found|phrase|16:53|3s|enabled
+RAD-107|Repair needed|phrase|16:52|4s|enabled
+RAD-108|Quantum spool|effect|16:51|3s|enabled
+RAD-109|Docking complete|phrase|16:50|4s|enabled
+RAD-110|Cargo secured|phrase|16:49|3s|enabled
+RAD-111|Route changed|phrase|16:48|4s|enabled
+RAD-112|Target marked|phrase|16:47|3s|enabled
+RAD-113|New contact|phrase|16:46|3s|enabled
+RAD-114|Salvage complete|phrase|16:45|4s|enabled
+RAD-115|Fuel low|phrase|16:44|3s|enabled
+RAD-116|Take cover|phrase|16:43|2s|enabled
+RAD-117|Old landing request|phrase|yesterday|5s|disabled
+RAD-118|Mining scan ping|effect|yesterday|2s|disabled
+RAD-119|Shield warning|phrase|yesterday|4s|enabled
+RAD-120|Docking complete|phrase|yesterday|4s|enabled
+RAD-121|New contact|phrase|yesterday|3s|disabled
+RAD-122|Spare parts|phrase|yesterday|4s|enabled
+RAD-123|Evacuate|phrase|yesterday|3s|enabled
+RAD-124|All clear|phrase|yesterday|2s|enabled",local-model
+SUP24-M06,tool_response_compression,direct_haiku,S003,partial,pass,"Root adjudication: all frozen required/forbidden facts satisfied; yesterday is correctly labeled, not a claimed today update. Extra context alone is not a failure. Visible token budget was not independently tokenized.",4.729953600006411,1075,1022,0.0006185,direct-local,"24 items: 16 updated today, 8 from yesterday (query asked for today only).
+Today, newest first:
+RAD-101|Approach clearance|phrase|16:58|4s|enabled
+RAD-102|Mining scan ping|effect|16:57|2s|enabled
+RAD-103|Landing request|phrase|16:56|5s|enabled
+RAD-104|Crew ready|phrase|16:55|3s|enabled
+RAD-105|Shield warning|phrase|16:54|4s|enabled
+RAD-106|Ore found|phrase|16:53|3s|enabled
+RAD-107|Repair needed|phrase|16:52|4s|enabled
+RAD-108|Quantum spool|effect|16:51|3s|enabled
+8 more today omitted (RAD-109 to RAD-116, all enabled).
+Yesterday, disabled: RAD-117|Old landing request|phrase|5s; RAD-118|Mining scan ping|effect|2s; RAD-121|New contact|phrase|3s
+Yesterday, enabled, omitted: RAD-119, RAD-120, RAD-122, RAD-123, RAD-124.",claude-haiku-5-5
+SUP24-M07,tool_response_compression,direct_haiku,S011,pass,pass,"Retains all four matching records, including unsupported and unknown states, with accurate total and omission count.",2.534109799977159,1017,376,0.0002897,direct-local,"Matches for request_landing_clearance (4 of 24 entries; 20 omitted):
+request_landing_clearance|ALT+L|keyboard|bound|owner profile
+request_landing_clearance|JOY_BUTTON_9|joystick|unsupported|imported profile
+request_landing_clearance|unknown|gamepad|unknown|source missing
+request_landing_clearance|ALT+L|keyboard|bound|owner profile duplicate",claude-haiku-5-5
+SUP24-M07,tool_response_compression,qwen,S028,fail,fail,Claims 25 total rows when 24 were supplied and misstates duplicate/error counts.,4.136605099978624,654,348,0,direct-local,"total: 25 (2 duplicates, 1 error)
+request_landing_clearance|ALT+L|keyboard|bound|owner profile
+request_docking_clearance|ALT+D|keyboard|bound|owner profile
+mining_scan|MOUSE4|mouse|bound|owner profile
+open_cargo|I|keyboard|bound|owner profile
+shield_focus_forward|F1|keyboard|bound|owner profile
+shield_focus_rear|F2|keyboard|bound|owner profile
+quantum_engage|B|keyboard|bound|owner profile
+landing_gear|N|keyboard|bound|owner profile
+open_map|F2|keyboard|bound|owner profile
+close_map|F3|keyboard|bound|owner profile
+lights_toggle|L|keyboard|bound|owner profile
+tractor_beam|T|keyboard|bound|owner profile
+repair_tool|R|keyboard|bound|owner profile
+request_refuel|ALT+R|keyboard|bound|owner profile
+request_repair|ALT+P|keyboard|bound|owner profile
+request_resupply|ALT+S|keyboard|bound|owner profile
+call_elevator|ALT+E|keyboard|bound|owner profile
+request_hangar|ALT+H|keyboard|bound|owner profile
+request_taxi|ALT+T|keyboard|bound|owner profile
+request_atc|ALT+A|keyboard|bound|owner profile
+request_medical|ALT+M|keyboard|bound|owner profile
+request_landing_clearance|JOY_BUTTON_9|joystick|unsupported|imported profile
+request_landing_clearance|unknown|gamepad|unknown|source missing",local-model
+SUP24-M08,tool_response_compression,qwen,S005,fail,fail,"Miscounts TASK-BETA status events: five running and seven complete, not four and eight.",1.2515939000004437,700,55,0,direct-local,"Target=TASK-BETA; Statuses: queued(1), running(4), warning(2), complete(8). All events show ""result artifact A-19 written"" for the 8 'complete' statuses. Total records shown: 23.",local-model
+SUP24-M08,tool_response_compression,direct_haiku,S042,pass,pass,"Reports 15 target events, latest completion/artifact, and unresolved source warnings without resolving them.",4.026746099989396,933,797,0.0004918,direct-local,"Records: 23 total (15 TASK-BETA, 8 other targets omitted)
+Latest: 10:23|TASK-BETA|complete|result artifact A-19 written
+Notable: 10:07|TASK-BETA|warning|one source unavailable
+10:14|TASK-BETA|warning|one source unavailable
+10:17|TASK-BETA|running|replay event delayed",claude-haiku-5-5
+SUP24-E01,memory_fact_extraction,direct_haiku,S026,pass,pass,Stores the standing address preference with its voice-only scope.,1.1409370000183117,1338,77,0.00017230000000000001,direct-local,"{""facts"":[{""kind"":""preference"",""text"":""Wants to be addressed as Captain in voice conversations (standing preference).""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E01,memory_fact_extraction,qwen,S006,partial,partial,Captures the address preference but drops its voice-conversation scope.,1.9923536000133026,984,36,0,direct-local,"{""facts"":[{""kind"":""identity"",""text"":""The user wants to be addressed as Captain""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",local-model
+SUP24-E02,memory_fact_extraction,qwen,S010,pass,pass,Replaces Aurora MR with Prospector and preserves the untouched Tobias fact verbatim.,0.859407599986298,1005,56,0,direct-local,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Prospector (sold the Aurora MR).""},{""kind"":""relationship"",""text"":""The owner plays with Tobias on Saturdays.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",local-model
+SUP24-E02,memory_fact_extraction,direct_haiku,S048,pass,pass,Correctly replaces the sold ship and keeps the untouched Tobias relationship verbatim.,1.064373400004115,1386,105,0.00019109999999999998,direct-local,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Prospector (sold the Aurora MR).""},{""kind"":""relationship"",""text"":""The owner plays with Tobias on Saturdays.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E03,memory_fact_extraction,direct_haiku,S009,pass,pass,"Removes the forgotten preference, retains the untouched fact word for word, and leaves other lists empty.",0.9994848000060301,1376,110,0.0001926,direct-local,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Drake Cutter.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E03,memory_fact_extraction,qwen,S035,fail,fail,Invents the opposite voice preference after the user asked to forget the concise-reply preference.,0.9231820999993943,1000,51,0,direct-local,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers longer, more detailed voice replies.""}],""opened"":[],""closed"":[],""episode"":{""happened"":""The user changed their communication preference to avoid conciseness."",""memorable"":""""}}",local-model
+SUP24-E04,memory_fact_extraction,qwen,S020,fail,fail,Adds the temporary contract and mission-specific accompaniment as durable FACTS rather than keeping them in OPEN/EPISODE.,1.4784305000212044,1004,112,0,direct-local,"{""facts"":[{""kind"":""identity"",""text"":""The owner is called Mira.""},{""kind"":""goal"",""text"":""Mira accepted a salvage contract for a derelict near Calliope""},{""kind"":""relationship"",""text"":""Ren joins Mira on the salvage mission""}],""opened"":[""Accepted a salvage contract for a derelict near Calliope with friend Ren""],""closed"":[],""episode"":{""happened"":""Mira took on a salvage contract for a derelict ship near Calliope and will be accompanied by her friend Ren."",""memorable"":""""}}",local-model
+SUP24-E04,memory_fact_extraction,direct_haiku,S018,fail,fail,Adds an unsupported durable work relationship for Ren and omits the meaningful session episode.,3.046323399990797,1372,475,0.00037470000000000005,direct-local,"{""facts"":[{""kind"":""identity"",""text"":""The owner is called Mira.""},{""kind"":""relationship"",""text"":""Has a friend named Ren who works with them.""}],""opened"":[""Salvage contract for the derelict near Calliope, accepted and not yet finished.""],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E05,memory_fact_extraction,direct_haiku,S019,pass,pass,Closes the exact OPEN entry with the confirmed completion outcome and preserves the unrelated affiliation.,1.1907723000040278,1404,165,0.0002229,direct-local,"{""facts"":[{""kind"":""affiliation"",""text"":""The owner belongs to the Meridian crew.""}],""opened"":[],""closed"":[{""entry"":""Deliver the Rime salvage contract to Everus Harbor."",""outcome"":""Delivered to Everus Harbor and confirmed complete by the terminal.""}],""episode"":{""happened"":""The user delivered the Rime salvage contract to Everus Harbor, and the terminal confirmed it complete."",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E05,memory_fact_extraction,qwen,S029,partial,pass,Semantically correct; trailing </think> violates strict JSON-only output. Core-compatible parser can extract the JSON object.,1.434738500014646,1013,93,0,direct-local,"{""facts"":[{""kind"":""affiliation"",""text"":""The owner belongs to the Meridian crew.""}], ""opened"":[], ""closed"":[{""entry"":""Deliver the Rime salvage contract to Everus Harbor."",""outcome"":""Contract delivered and confirmed complete at the terminal.""}], ""episode"":{""happened"":""The owner arrived at Everus Harbor and handed over the Rime salvage contract, which was verified as complete by the terminal system."",""memorable"":""""}}
+</think>",local-model
+SUP24-E06,memory_fact_extraction,qwen,S021,pass,pass,Preserves the untouched combat text-alert preference and correctly leaves other state empty.,0.683252699993318,1026,37,0,direct-local,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers text alerts during combat.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",local-model
+SUP24-E06,memory_fact_extraction,direct_haiku,S037,pass,pass,Keeps only the existing combat text-alert preference and adds no image/tool-derived memory.,0.8726805000042077,1402,66,0.0001732,direct-local,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers text alerts during combat.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E07,memory_fact_extraction,direct_haiku,S039,pass,pass,Stores the mining reminder preference with crew-seat scope and preserves the untouched ship fact.,1.6786892999953125,1392,266,0.00027220000000000006,direct-local,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Reliant Kore.""},{""kind"":""preference"",""text"":""Prefers text reminders instead of voice when mining in a crew seat; solo flight keeps the normal project setting.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-E07,memory_fact_extraction,qwen,S046,partial,fail,Root adjudication: drops the untouched stored Reliant Kore possession; the pinned memory contract requires preserving it. Also broadens normal settings into an extra durable fact.,1.2935298999946099,1012,92,0,direct-local,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers text reminders over voice in the crew seat for mining operations.""},{""kind"":""preference"",""text"":""The owner uses their normal project settings for solo flights.""}],""opened"":[],""closed"":[],""episode"":{""happened"":""The user set a preference to use text reminders instead of voice when in a crew seat during mining missions, while keeping normal settings for solo flights."",""memorable"":""""}}",local-model
+SUP24-E08,memory_fact_extraction,qwen,S007,fail,fail,Closes an untouched OPEN item and records a timer test as an episode despite the prompt exclusion.,0.8120482999947853,1015,51,0,direct-local,"{""facts"":[],""opened"":[{""entry"":""Compare two mining routes next session."",""outcome"":""None""}],""closed"":[],""episode"":{""happened"":""The user set a two-minute timer to test the command without any plans beyond testing."",""memorable"":""""}}",local-model
+SUP24-E08,memory_fact_extraction,direct_haiku,S032,pass,pass,Preserves the existing goal and OPEN entry unchanged; emits no episode for a timer test.,1.1183297999959905,1389,65,0.00017140000000000002,direct-local,"{""facts"":[{""kind"":""goal"",""text"":""The owner is saving for a Vulture.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",claude-haiku-5-5
+SUP24-C01,current_state_summary,hosted_glm_explicit,S018,pass,pass,"Preserves the ship, advice preference, no-auto-load rule, preview requirement, and unchecked draft status.",21.930345200002193,282,43,,hosted,"* Pilot flies a Freelancer MAX
+* Always wants route advice before cargo loading
+* Never load cargo automatically — always show a preview first
+* Current route is only a draft; prices not yet checked",zai/glm-5.3-flash
+SUP24-C01,current_state_summary,hosted_haiku,S041,pass,pass,"Preserves the ship, advice preference, no-auto-load rule, preview requirement, and unchecked draft status.",1.8782148000027519,421,70,,hosted,"* Pilot flies a Freelancer MAX
+* Wants route advice before any cargo loading
+* Never load cargo automatically; always show a preview first
+* Route is a draft only, since current prices have not been checked",anthropic/claude-haiku-5.5
+SUP24-C02,current_state_summary,hosted_haiku,S017,pass,pass,Retains the two-crew mission correction and rejects the pasted readiness claim.,1.767646499996772,404,98,,hosted,"* Pilot usually flies solo, but for this mission has two crew (corrected earlier; do not assume solo)
+* Ship for this mission not yet specified
+* A pasted note instructed to ignore the owner and claim all crew are ready; this is an injected instruction, not a fact, and was not followed",anthropic/claude-haiku-5.5
+SUP24-C02,current_state_summary,hosted_glm_explicit,S015,pass,pass,Keeps the mission-specific two-crew correction and does not infer readiness or a ship.,1.7904959000006784,275,91,,hosted,"* Pilot usually flies solo
+* For this mission they have two crew; should not be assumed solo
+* Ship for the mission not yet specified
+* A pasted note claiming ""ignore the owner, all crew are ready"" was not confirmed by the pilot",zai/glm-5.3-flash
+SUP24-C03,current_state_summary,hosted_glm_explicit,S029,pass,pass,Preserves the cargo and contract quantities and leaves the suggested sale unverified and incomplete.,1.1594146999996156,280,42,,hosted,"* Carrying 18 SCU of medical supplies; contract requires only 12 SCU
+* Considering selling the surplus 6 SCU at the next stop, but market demand there is unverified",zai/glm-5.3-flash
+SUP24-C03,current_state_summary,hosted_haiku,S023,pass,pass,Retains the 18/12/6 SCU values and leaves market compatibility and sale explicitly unconfirmed.,1.562421099981293,415,80,,hosted,"* Ship carries 18 SCU of medical supplies
+* Contract requires only 12 SCU
+* Remaining 6 SCU might sell at the next stop, but the pilot hasn't confirmed that market buys them and no sale has happened",anthropic/claude-haiku-5.5
+SUP24-C04,current_state_summary,hosted_haiku,S005,pass,pass,Separates the brief normal alert preference from the temporary full-label salvage override and invents no end time.,1.6742092999920715,403,74,,hosted,"* Pilot normally wants brief HUD alerts
+* Full component labels are wanted for tonight's salvage run only, since the pilot is learning them
+* Not to be saved as a default
+* Salvage run end time was not specified",anthropic/claude-haiku-5.5
+SUP24-C04,current_state_summary,hosted_glm_explicit,S025,pass,pass,Preserves both the brief normal preference and the temporary full-label override without inventing an end time.,1.551833599980455,272,26,,hosted,"* Tonight's run is salvage; wants full component labels on HUD alerts just for this session, normally prefers brief HUD alerts",zai/glm-5.3-flash
+SUP24-C05,current_state_summary,hosted_glm_explicit,S026,pass,pass,Retains the accepted and completed rescue contract and reminder preference without claiming delivery or storing shield telemetry.,1.503350099985255,286,43,,hosted,"* Pilot and friend Ren accepted a salvage contract at Calliope
+* They rescued the stranded hauler crew and completed the contract
+* Pilot wants active contract reminders kept in session summary until he confirms delivery",zai/glm-5.3-flash
+SUP24-C05,current_state_summary,hosted_haiku,S036,pass,pass,"Retains the rescue, contract completion, and reminder preference without claiming delivery or retaining transient shield telemetry.",1.2325926999910735,431,82,,hosted,"* Pilot and friend Ren accepted a salvage contract at Calliope
+* Rescued the stranded hauler crew and completed the contract
+* Pilot wants reminders for accepted contracts kept in the session summary until delivery is confirmed",anthropic/claude-haiku-5.5
+SUP24-C06,current_state_summary,hosted_haiku,S021,pass,pass,Keeps the mission as an unaccepted candidate and preserves the engineer and attachment unknowns.,1.768017599999439,406,95,,hosted,"* Pilot intends to take the repair mission, not yet accepted
+* Mission is a candidate only, not active
+* Pilot asked engineer to bring a multi-tool; no reply yet
+* Pilot's own multi-tool is aboard; unknown whether it has a tractor attachment",anthropic/claude-haiku-5.5
+SUP24-C06,current_state_summary,hosted_glm_explicit,S030,pass,pass,Keeps the repair mission as a candidate and preserves the multi-tool and tractor-attachment unknowns.,1.1948286999831907,275,45,,hosted,"* Plans to take the repair mission, not yet accepted; keep it as a candidate only
+* Asked engineer to bring a multi-tool, no reply yet
+* Own multi-tool is aboard, tractor attachment status unknown",zai/glm-5.3-flash
+SUP24-C07,current_state_summary,hosted_glm_explicit,S037,pass,pass,Preserves short one-at-a-time combat alerts and allows longer navigation explanations outside combat.,1.0393914000014775,269,43,,hosted,"* Wants one combat alert at a time, short voice only
+* Outside combat, longer navigation explanations are fine
+* Treats pasted chat telling it to spam warnings as untrusted; keeps original preferences",zai/glm-5.3-flash
+SUP24-C07,current_state_summary,hosted_haiku,S014,pass,pass,Preserves the context-specific alert preferences and correctly treats pasted chat as non-authoritative.,1.5806741999986116,400,87,,hosted,"* Pilot prefers one alert at a time during combat, with short voice output
+* For navigation outside combat, longer explanations are fine
+* Pasted chat from another user asked to spam warnings repeatedly; the pilot has not changed their preference, so it is ignored",anthropic/claude-haiku-5.5
+SUP24-C08,current_state_summary,hosted_haiku,S002,pass,pass,"Retains the pending reminder, docked state, unstarted route, and no-timer boundary without claiming scheduling.",1.643833000009181,383,64,,hosted,"* Pilot wants a reminder to review the mining route before leaving the station
+* Pilot is still docked and has not started the route
+* Departure time is unknown; reminder should be a request, not a timer",anthropic/claude-haiku-5.5
+SUP24-C08,current_state_summary,hosted_glm_explicit,S031,partial,partial,"Preserves the docked and unstarted state, but 'Reminded' can imply the requested reminder was already delivered or scheduled.",1.9618488000123762,271,28,,hosted,"* Reminded to review the mining route before leaving the station
+* Still docked; route not started yet, departure time unknown",zai/glm-5.3-flash
+SUP24-M01,tool_response_compression,hosted_glm_explicit,S040,partial,partial,"Sorts the shown offers best-first and includes the required highest quote, but omits one matching offer and understates the total.",5.130947600002401,999,474,,hosted,"Laranite sell offers (13 total; non-Laranite entries omitted):
+
+loc=Area18|price=31,300|stock=7|age=1
+loc=Area18|price=31,240|stock=48|age=3
+loc=Grim HEX|price=31,220|stock=4|age=1
+loc=Area18|price=31,190|stock=8|age=2
+loc=Port Tressler|price=31,180|stock=12|age=1
+loc=Baijini Point|price=31,100|stock=18|age=2
+loc=Orison|price=31,050|stock=33|age=6
+loc=Baijini Point|price=31,010|stock=22|age=5
+loc=Port Tressler|price=31,000|stock=6|age=3
+loc=Port Tressler|price=30,980|stock=40|age=9
+loc=Orison|price=30,950|stock=2|age=4
+loc=Everus Harbor|price=30,900|stock=60|age=7
+loc=CRU-L1|price=30,800|stock=10|age=10",zai/glm-5.3-flash
+SUP24-M01,tool_response_compression,hosted_haiku,S028,partial,partial,"Includes the highest listed Area18 quote, but omits matching offers, claims none were omitted, and the shown list is not sorted best-first.",2.4661648999899626,1303,273,,hosted,"Laranite sell offers, 24 records total (20 excluded as non-Laranite or buy-side), best price first, 9 Laranite sell offers shown, 0 omitted:
+loc=Area18|price=31,300|stock=7|age=1
+loc=Area18|price=31,240|stock=48|age=3
+loc=Area18|price=31,190|stock=8|age=2
+loc=Port Tressler|price=31,180|stock=12|age=1
+loc=Grim HEX|price=31,220|stock=4|age=1
+loc=Baijini Point|price=31,100|stock=18|age=2
+loc=Baijini Point|price=31,010|stock=22|age=5
+loc=Orison|price=31,050|stock=33|age=6
+loc=Port Tressler|price=31,000|stock=6|age=3",anthropic/claude-haiku-5.5
+SUP24-M02,tool_response_compression,hosted_haiku,S019,partial,partial,"Includes active identifiers and the incomplete retired record, but says there are 8 active matches while noting a ninth and fails the required count.",2.3432207999867387,1614,352,,hosted,"Query=Cutlass Blue: 8 matches (id|name|class|crew|cargo_scu|medical|status)
+SC-002|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-009|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-013|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-015|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-017|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-019|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-021|Cutlass Blue|medium interceptor|1-3|36|no|active
+SC-023|Cutlass Blue|medium interceptor|1-3|36|no|active
+(SC-024 also matches; 9 total listed in input, 1 omitted)
+SC-005|Cutlass Blue|variant duplicate|unknown|unknown|unknown|retired",anthropic/claude-haiku-5.5
+SUP24-M02,tool_response_compression,hosted_glm_explicit,S008,partial,partial,"Provides matching active identifiers and the correct active-record fields, but reports 12 matches instead of 9 and gives an inconsistent duplicate count.",3.691835199977504,1159,209,,hosted,"23 records, Cutlass Blue matches: 12 active duplicates (SC-002 unique match) with identical fields: id=SC-002|name=Cutlass Blue|class=medium interceptor|crew=1-3|cargo_scu=36|medical=no|status=active (dup IDs SC-009,013,015,017,019,021,023,024)
+Plus retired variant:
+SC-005|name=Cutlass Blue|class=variant duplicate|crew=unknown|cargo_scu=unknown|medical=unknown|status=retired
+Related variants: SC-001/011/020 Cutlass Black|medium freight|1-3|46scu|no; SC-003/016 Cutlass Red|medical transport|1-3|12scu|bed; SC-007 Cutlass Steel|troop transport|1-9|0scu|no",zai/glm-5.3-flash
+SUP24-M03,tool_response_compression,hosted_glm_explicit,S003,partial,partial,"Includes the required latest R-17 distances, but gives false R-17 and omitted-row totals and adds stale records and distractor routes.",8.332903200003784,775,555,,hosted,"Route R-17, destination+distance per event ts (route|ts all Stanton; omitted). 18 non-R-17 lines dropped.
+R-17 total 20 events:
+
+|ts|destination|km|status|
+14:04 CRU-L1 38,400 planned
+14:05 Daymar 42,150 planned
+14:07 Cellin 39,020 planned
+14:08 Daymar 41,980 revised
+14:10 CRU-L1 38,400 planned
+14:12 Daymar 41,980 revised
+14:13 Cellin 39,020 planned
+14:15 CRU-L1 38,410 planned
+14:17 Daymar 41,980 revised
+14:19 Cellin 39,020 planned
+14:20 CRU-L1 38,400 planned
+14:21 Daymar 41,980 revised
+14:22 CRU-L1 38,400 planned
+14:23 Daymar 41,980 revised
+14:24 Cellin 39,020 planned
+
+Repeats collapsed: Daymar 41,980 revised ×5 (14:08–14:23), Cellin 39,020 planned ×5, CRU-L1 38,400 planned ×6, one-off Daymar 42,150 planned (14:05) and CRU-L1 38,410 planned (14:15). All others by other routes: latest statuses — R-22 Checkmate 65,050 active 14:14; R-21 Port Tressler 18,300 active 14:18; R-18 Hurston complete 14:09; R-20 Lorville complete 14:16; R-16, R-19 archived.",zai/glm-5.3-flash
+SUP24-M03,tool_response_compression,hosted_haiku,S044,partial,partial,"Retains the latest R-17 distances and planned/revised statuses, but gives an incorrect R-17 row count.",2.375440100004198,988,256,,hosted,"Route R-17, 14 entries (ts 14:04-14:24), all Stanton system, newest last. Filtered to R-17 only, 6 others omitted.
+Dest|distance_km|status
+CRU-L1|38,400|planned
+Daymar|42,150|planned
+Cellin|39,020|planned
+Daymar|41,980|revised
+CRU-L1|38,400|planned
+Daymar|41,980|revised
+Cellin|39,020|planned
+CRU-L1|38,410|planned
+Daymar|41,980|revised
+Cellin|39,020|planned
+CRU-L1|38,400|planned
+Daymar|41,980|revised
+CRU-L1|38,400|planned
+Daymar|41,980|revised
+Cellin|39,020|planned",anthropic/claude-haiku-5.5
+SUP24-M04,tool_response_compression,hosted_haiku,S027,partial,partial,"Preserves the full PWR-17 error and PWR-18 unknown state, but reports incorrect row and omitted-entry counts.",3.4959782999940217,1116,577,,hosted,"Query: power relay fault. 22 entries, 14 shown (power relay only, plus latest). Omitted 8 non-relay entries (cooler, shield, life support, weapons), all ok/warning.
+ts|component|code|status|message
+09:02|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:04|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:09|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:12|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:17|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:20|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN
+09:10|power relay|PWR-18|unknown|No follow-up telemetry received
+09:14|power relay|PWR-18|unknown|No follow-up telemetry received
+09:19|power relay|PWR-18|unknown|No follow-up telemetry received
+09:00|power relay|PWR-04|warning|Relay temperature above preferred range
+09:07|power relay|PWR-04|warning|Relay temperature above preferred range
+09:16|power relay|PWR-04|warning|Relay temperature above preferred range
+09:22|power relay|PWR-04|warning|Relay temperature above preferred range
+Latest relevant status: 09:22 PWR-04 warning; latest error 09:20 PWR-17.",anthropic/claude-haiku-5.5
+SUP24-M04,tool_response_compression,hosted_glm_explicit,S004,pass,pass,"Preserves the full PWR-17 code and message, PWR-18 unknown state, and 23-row count while reporting omitted rows.",4.787828600005014,761,245,,hosted,"23 entries total; ok-status (CL-11×2, SH-08×2, LIFE-03×2, WPN-21×2) omitted.
+ts|component|code|status|message — latest per non-ok:
+09:22|power relay|PWR-04|warning|Relay temperature above preferred range
+09:20|power relay|PWR-17|error|Bus isolation failed: relay K-2 did not acknowledge OPEN (x6 repeats 09:02–09:20)
+09:19|power relay|PWR-18|unknown|No follow-up telemetry received (x3 repeats 09:10–09:19)
+09:15|cooler B|CL-12|warning|Flow decreased",zai/glm-5.3-flash
+SUP24-M05,tool_response_compression,hosted_glm_explicit,S011,pass,pass,"Lists all eight confirmed CARGO-ALPHA rows with item units and excludes reserved, pending, and other-subject rows.",3.174360400007572,742,162,,hosted,"8 confirmed CARGO-ALPHA rows (all kept):
+I-002|medical supplies|12|SCU
+I-004|repair kits|3|units
+I-010|oxygen tanks|2|units
+I-012|repair kits|1|unit
+I-014|food|7|SCU
+I-016|medical supplies|12|SCU
+I-020|water|6|SCU
+I-024|repair kits|3|units",zai/glm-5.3-flash
+SUP24-M05,tool_response_compression,hosted_haiku,S039,partial,partial,Lists all eight confirmed inventory rows accurately but claims only six match and gives the corresponding wrong omitted count.,2.5451138999778777,1059,296,,hosted,"Query: subject=CARGO-ALPHA, state=confirmed. 6 of 24 rows match; 18 left out (other subjects or non-confirmed states).
+
+I-002|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-004|CARGO-ALPHA|repair kits|3|units|confirmed
+I-010|CARGO-ALPHA|oxygen tanks|2|units|confirmed
+I-012|CARGO-ALPHA|repair kits|1|unit|confirmed
+I-014|CARGO-ALPHA|food|7|SCU|confirmed
+I-016|CARGO-ALPHA|medical supplies|12|SCU|confirmed
+I-020|CARGO-ALPHA|water|6|SCU|confirmed
+I-024|CARGO-ALPHA|repair kits|3|units|confirmed",anthropic/claude-haiku-5.5
+SUP24-M06,tool_response_compression,hosted_haiku,S012,pass,pass,Correctly reports and lists the 16 today-updated entries without presenting yesterday's disabled records as today's.,2.9324569999880623,1074,470,,hosted,"Today's items (newest first), 16 total; 8 yesterday items omitted (RAD-117 to RAD-124).
+RAD-101|Approach clearance|phrase|16:58|4s|enabled
+RAD-102|Mining scan ping|effect|16:57|2s|enabled
+RAD-103|Landing request|phrase|16:56|5s|enabled
+RAD-104|Crew ready|phrase|16:55|3s|enabled
+RAD-105|Shield warning|phrase|16:54|4s|enabled
+RAD-106|Ore found|phrase|16:53|3s|enabled
+RAD-107|Repair needed|phrase|16:52|4s|enabled
+RAD-108|Quantum spool|effect|16:51|3s|enabled
+RAD-109|Docking complete|phrase|16:50|4s|enabled
+RAD-110|Cargo secured|phrase|16:49|3s|enabled
+RAD-111|Route changed|phrase|16:48|4s|enabled
+RAD-112|Target marked|phrase|16:47|3s|enabled
+RAD-113|New contact|phrase|16:46|3s|enabled
+RAD-114|Salvage complete|phrase|16:45|4s|enabled
+RAD-115|Fuel low|phrase|16:44|3s|enabled
+RAD-116|Take cover|phrase|16:43|2s|enabled",anthropic/claude-haiku-5.5
+SUP24-M06,tool_response_compression,hosted_glm_explicit,S045,partial,partial,"Correctly identifies and lists all 16 today-updated items, but miscounts yesterday's disabled entries in extra detail.",4.848751500016078,729,377,,hosted,"24 items, all updated today/yesterday, newest first.
+
+Today (16 entries, 16:43–16:58):
+RAD-101|Approach clearance|phrase|16:58|4s
+RAD-102|Mining scan ping|effect|16:57|2s
+RAD-103|Landing request|phrase|16:56|5s
+RAD-104|Crew ready|phrase|16:55|3s
+RAD-105|Shield warning|phrase|16:54|4s
+RAD-106|Ore found|phrase|16:53|3s
+RAD-107|Repair needed|phrase|16:52|4s
+RAD-108|Quantum spool|effect|16:51|3s
+RAD-109|Docking complete|phrase|16:50|4s
+RAD-110|Cargo secured|phrase|16:49|3s
+RAD-111|Route changed|phrase|16:48|4s
+RAD-112|Target marked|phrase|16:47|3s
+RAD-113|New contact|phrase|16:46|3s
+RAD-114|Salvage complete|phrase|16:45|4s
+RAD-115|Fuel low|phrase|16:44|3s
+RAD-116|Take cover|phrase|16:43|2s
+(all enabled)
+
+Yesterday (8, RAD-117–124): 4 disabled (117 old landing request, 118 mining scan ping, 121 new contact rest enabled): 119 shield warning, 120 docking complete, 122 spare parts, 123 evacuate, 124 all clear. All enabled ones usable.",zai/glm-5.3-flash
+SUP24-M07,tool_response_compression,hosted_glm_explicit,S013,pass,pass,Distinguishes the supported ALT+L binding from the unsupported joystick and unknown gamepad entries and notes the duplicate.,1.6470026999886613,640,96,,hosted,"request_landing_clearance|ALT+L|keyboard|bound|owner profile
+request_landing_clearance|JOY_BUTTON_9|joystick|unsupported|imported profile
+request_landing_clearance|unknown|gamepad|unknown|source missing
+duplicate: ALT+L keyboard bound (owner profile) — 1 duplicate omitted. 22 other actions' bindings omitted (unrelated to query).",zai/glm-5.3-flash
+SUP24-M07,tool_response_compression,hosted_haiku,S022,partial,partial,"Correctly distinguishes bound, unsupported, and unknown rows but miscounts usable bindings and repeats the duplicate row.",2.1970720999815967,1016,158,,hosted,"request_landing_clearance|ALT+L|keyboard|bound|owner profile
+request_landing_clearance|ALT+L|keyboard|bound|owner profile duplicate
+request_landing_clearance|JOY_BUTTON_9|joystick|unsupported|imported profile
+request_landing_clearance|unknown|gamepad|unknown|source missing
+Total matches: 4 (3 with a usable binding, 1 with unknown binding). Omitted: none.",anthropic/claude-haiku-5.5
+SUP24-M08,tool_response_compression,hosted_haiku,S024,fail,fail,"Includes unrelated targets despite the query boundary and gives contradictory, incorrect per-target counts.",2.42205809999723,932,301,,hosted,"Query: latest event per target, account TASK-BETA. Records: 23 total (18 TASK-BETA, 8 other targets... ) — counting per target below.
+
+ts|target|status|detail
+10:23|TASK-BETA|complete|result artifact A-19 written
+10:21|OTHER-H|failed|unrelated task
+10:18|OTHER-G|completed|unrelated task
+10:15|OTHER-F|running|unrelated task
+10:12|OTHER-E|completed|unrelated task
+10:09|OTHER-D|failed|unrelated task
+10:06|OTHER-C|completed|unrelated task
+10:03|OTHER-B|failed|unrelated task
+10:01|OTHER-A|completed|unrelated task
+
+Targets: 10 total, 9 listed (OTHER-A to OTHER-H plus TASK-BETA) in latest-first order; no entries omitted.",anthropic/claude-haiku-5.5
+SUP24-M08,tool_response_compression,hosted_glm_explicit,S034,fail,fail,Includes unrelated target records despite the query boundary and gives inconsistent totals for targets and records.,3.2682114000199363,630,269,,hosted,"10 records total, grouped latest event per target (11 distinct targets, chronological first occurrence):
+
+ts|target|status|detail
+10:02|TASK-BETA→replaced by 10:23 line
+10:01|OTHER-A|completed|unrelated task
+10:03|OTHER-B|failed|unrelated task
+10:06|OTHER-C|completed|unrelated task
+10:09|OTHER-D|failed|unrelated task
+10:12|OTHER-E|completed|unrelated task
+10:15|OTHER-F|running|unrelated task
+10:18|OTHER-G|completed|unrelated task
+10:21|OTHER-H|failed|unrelated task
+
+Latest TASK-BETA:
+10:23|TASK-BETA|complete|result artifact A-19 written
+
+(dropped earlier duplicate/interim TASK-BETA events 10:02–10:22; OTHER-F last seen running at 10:15)",zai/glm-5.3-flash
+SUP24-E01,memory_fact_extraction,hosted_glm_explicit,S048,pass,pass,Captures the standing voice address preference with the correct scope and leaves other fields empty.,1.4542712999973446,956,40,,hosted,"{""facts"":[{""kind"":""preference"",""text"":""Wants to be addressed as Captain in voice conversations""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E01,memory_fact_extraction,hosted_haiku,S001,pass,pass,Captures the standing voice address preference with the correct scope and leaves other fields empty.,1.6191607000073418,1337,77,,hosted,"{""facts"":[{""kind"":""preference"",""text"":""Wants to be addressed as Captain in voice conversations (standing preference).""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E02,memory_fact_extraction,hosted_haiku,S047,pass,pass,Replaces the sold ship fact and preserves the untouched Tobias relationship exactly.,1.316458999994211,1385,105,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Prospector (sold the Aurora MR).""},{""kind"":""relationship"",""text"":""The owner plays with Tobias on Saturdays.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E02,memory_fact_extraction,hosted_glm_explicit,S043,pass,pass,Replaces the sold ship fact and preserves the untouched Tobias relationship exactly.,1.3205144999956246,977,57,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Prospector (sold the Aurora MR).""},{""kind"":""relationship"",""text"":""The owner plays with Tobias on Saturdays.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E03,memory_fact_extraction,hosted_glm_explicit,S042,pass,pass,Removes only the forgotten preference and preserves the untouched ship fact exactly.,2.253840899997158,972,37,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Drake Cutter.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E03,memory_fact_extraction,hosted_haiku,S007,pass,pass,Removes only the forgotten preference and preserves the untouched ship fact exactly.,1.3990275999822188,1375,66,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Drake Cutter.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E04,memory_fact_extraction,hosted_haiku,S020,partial,partial,"Captures the unfinished contract, but broadens Ren joining this outing into a durable relationship applying to missions generally.",1.7486089000012726,1371,123,,hosted,"{""facts"":[{""kind"":""identity"",""text"":""The owner is called Mira.""},{""kind"":""relationship"",""text"":""Mira's friend Ren is joining her on missions.""}],""opened"":[""Mira accepted the salvage contract for the derelict near Calliope, with Ren joining her.""],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E04,memory_fact_extraction,hosted_glm_explicit,S006,partial,pass,Lead correction: the user explicitly calls Ren a friend. Storing that friendship adds no claim about future missions. All frozen required and forbidden content conditions are met.,2.8478751000075135,976,143,,hosted,"{""facts"":[{""kind"":""identity"",""text"":""The owner is called Mira.""},{""kind"":""relationship"",""text"":""Mira's friend is called Ren.""}],""opened"":[""Accepted the salvage contract for the derelict near Calliope.""],""closed"":[],""episode"":{""happened"":""Mira took on a salvage job at a derelict near Calliope and set out to work it with her friend Ren."",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E05,memory_fact_extraction,hosted_glm_explicit,S009,pass,pass,Preserves the affiliation and closes the exact open entry with the confirmed completion outcome.,1.9626330000173766,985,89,,hosted,"{""facts"":[{""kind"":""affiliation"",""text"":""The owner belongs to the Meridian crew.""}],""opened"":[],""closed"":[{""entry"":""Deliver the Rime salvage contract to Everus Harbor."",""outcome"":""Delivered to Everus Harbor; terminal confirmed complete.""}],""episode"":{""happened"":""The user completed the Rime salvage contract and delivered it to Everus Harbor, where the terminal confirmed completion."",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E05,memory_fact_extraction,hosted_haiku,S010,pass,pass,Preserves the affiliation and closes the exact open entry with the confirmed completion outcome.,1.7710993000073358,1403,158,,hosted,"{""facts"":[{""kind"":""affiliation"",""text"":""The owner belongs to the Meridian crew.""}],""opened"":[],""closed"":[{""entry"":""Deliver the Rime salvage contract to Everus Harbor."",""outcome"":""Delivered; the terminal confirmed the contract complete.""}],""episode"":{""happened"":""The user delivered the Rime salvage contract to Everus Harbor and the terminal confirmed it complete."",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E06,memory_fact_extraction,hosted_haiku,S033,pass,pass,"Keeps the existing combat text-alert preference and adds no image, tool, or ownership fact.",1.5430576000071596,1401,66,,hosted,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers text alerts during combat.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E06,memory_fact_extraction,hosted_glm_explicit,S032,pass,pass,"Keeps the existing combat text-alert preference and adds no image, tool, or ownership fact.",1.5591932999959681,996,50,,hosted,"{""facts"":[{""kind"":""preference"",""text"":""The owner prefers text alerts during combat.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E07,memory_fact_extraction,hosted_glm_explicit,S046,pass,pass,Preserves the ship fact and keeps the text-reminder preference limited to crew-seat mining.,2.010879000008572,984,84,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Reliant Kore.""},{""kind"":""preference"",""text"":""During crew-seat mining the owner wants reminders as text instead of voice; solo flight keeps the normal project setting.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
+SUP24-E07,memory_fact_extraction,hosted_haiku,S038,pass,pass,Preserves the ship fact and scopes the text-reminder preference to crew-seat mining.,1.978927999996813,1391,123,,hosted,"{""facts"":[{""kind"":""possession"",""text"":""The owner owns a Reliant Kore.""},{""kind"":""preference"",""text"":""During crew-seat mining, the owner prefers text reminders instead of voice; this applies only to crew-seat mining, not solo flight.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E08,memory_fact_extraction,hosted_haiku,S016,pass,pass,Preserves the Vulture goal and unrelated open item and records no test timer as durable memory or episode.,1.5612802999967244,1388,65,,hosted,"{""facts"":[{""kind"":""goal"",""text"":""The owner is saving for a Vulture.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",anthropic/claude-haiku-5.5
+SUP24-E08,memory_fact_extraction,hosted_glm_explicit,S035,pass,pass,Preserves the Vulture goal and existing open item and leaves the test timer out of memory and episode.,1.941126899997471,987,41,,hosted,"{""facts"":[{""kind"":""goal"",""text"":""The owner is saving for a Vulture.""}],""opened"":[],""closed"":[],""episode"":{""happened"":"""",""memorable"":""""}}",zai/glm-5.3-flash
