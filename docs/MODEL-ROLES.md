@@ -16,8 +16,7 @@ round-trip on every request. The decision provider/model is configurable;
 Jev is not the only allowed decision model. [Editable flow](diagrams/WINGMAN-STOCK-FLOW.mmd).
 
 See [model placement and hosted baselines](research/WINGMAN-MODEL-PLACEMENT-2026-11-09.md)
-for role-specific recommendations and the remaining comparison gap. The vision
-box describes an image-capable Main model, not an additional stock model.
+for the earlier role-placement analysis. Current Main and Support benchmarks are separate.
 
 **Waterfall can route Main and, optionally, Core's existing Support role.** Main
 handles conversation, reasoning, tool choices and tool arguments. The optional
@@ -25,11 +24,9 @@ Support chain serves only requests Core already schedules; Core retains its
 scheduler and memory policy. Support does not change Main's provider, and neither
 role replaces Jev.
 
-![Wingman model roles](diagrams/WINGMAN-MODEL-ROLES.png)
+![Same Wingman flow with optional Main and Support chains](diagrams/WINGMAN-WATERFALL-FLOW.png)
 
-The stock map is unchanged. This older extension map illustrates Main-only Waterfall; it does not show the optional Support chain:
-
-![Main-only Waterfall extension; Support remains separate](diagrams/WINGMAN-MODEL-ROLES-EXTENSIONS.png)
+The diagrams use the same positions and roles. Only the selected Main or Support model changes; the existing tools and workflows stay the same.
 
 | Role | Job | Waterfall scope |
 |---|---|---|
@@ -50,13 +47,12 @@ Those examples do not imply every request passes through every model.
 
 Waterfall can be selected independently for Wingman Main and Support. Its Main routes affect main-model calls, including explicit skill main-model side calls; the optional Support chain handles only Support requests Core has already scheduled. Core retains scheduling and memory policy. Main and Support have separate routes and provider/model credential references. Optional Jev assistance reuses the configured public decision interface on Main routes only.
 
-The accompanying 24-task comparison is a main-model/tool benchmark. It does not rank Support memory extraction or background summarization. No benchmark rerun or Support setting change was needed for this role clarification.
+The [Main comparison](../benchmarks/REPORT.md) exercises tool workflows. The separate [Support comparison](../benchmarks/SUPPORT-REPORT.md) covers memory extraction, summaries and tool-response compression. Both use 24 tasks per condition; their different workloads and settings must not be mixed into one model ranking.
 
 ## Source trace
 
 Reviewed official Core commit: `f0364106a9ea13eb5aee45f73cd9af86c79cd213`.
-The current main ref was rechecked on 2026-11-09. Simon's explanation prompted
-this audit; the source paths independently establish the distinctions.
+The current main ref was rechecked on 2026-11-09. These source paths establish the distinctions.
 
 - [`ProviderFactory.create_llm`](https://github.com/ShipBit/wingman-ai/blob/f0364106a9ea13eb5aee45f73cd9af86c79cd213/services/provider_factory.py) selects the configured conversation provider.
 - [`Wingman.actual_llm_call`](https://github.com/ShipBit/wingman-ai/blob/f0364106a9ea13eb5aee45f73cd9af86c79cd213/wingmen/wingman.py#L849) calls that main provider.
@@ -64,10 +60,8 @@ this audit; the source paths independently establish the distinctions.
 - [`SkillLocalAiView`](https://github.com/ShipBit/wingman-ai/blob/f0364106a9ea13eb5aee45f73cd9af86c79cd213/wingmen/facade.py#L514) exposes the separate support, summary and embedding interfaces.
 - [`SkillSystemOne`](https://github.com/ShipBit/wingman-ai/blob/f0364106a9ea13eb5aee45f73cd9af86c79cd213/wingmen/facade.py#L1871) exposes typed decisions.
 
-Engineering modules are deliberately omitted from these shareable diagrams.
-The stock map remains unchanged. The older extension map shows Waterfall on Main
-only; it does not depict the optional Support chain. Jev remains separate.
+Engineering modules are omitted from these shareable diagrams. The stock roles and Jev remain unchanged.
 
-The [stock diagram source](diagrams/WINGMAN-MODEL-ROLES.mmd) and
-[extension diagram source](diagrams/WINGMAN-MODEL-ROLES-EXTENSIONS.mmd) are role maps, not a
+The [stock diagram source](diagrams/WINGMAN-STOCK-FLOW.mmd) and
+[Waterfall diagram source](diagrams/WINGMAN-WATERFALL-FLOW.mmd) are role maps, not a
 claim that all skills, providers or runtime combinations are independently tested.

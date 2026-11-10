@@ -42,6 +42,7 @@ class OwnedServer:
             if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
                 listener.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
             listener.bind(("127.0.0.1", self.port))
+            self.port = listener.getsockname()[1]
             listener.listen(8)
             self._server = uvicorn.Server(
                 uvicorn.Config(
@@ -101,6 +102,9 @@ class ProviderFallback(Skill):
         self._bridge_name = None
         self._event_generation = 0
         self._core_loop = None
+        self._setup_server = None
+        self._setup_expiry = None
+        self._setup_link = None
 
     def _settings(self, errors):
         properties = {p.id: p.value for p in self.config.custom_properties}
@@ -394,11 +398,130 @@ class ProviderFallback(Skill):
 
     async def unload(self):
         async with self._lock:
+            if self._setup_expiry is not None:
+                self._setup_expiry.cancel()
+                self._setup_expiry = None
+            if self._setup_server is not None:
+                if not await asyncio.to_thread(self._setup_server.stop):
+                    raise RuntimeError("provider_setup_cleanup_unknown")
+                self._setup_server = None
+                self._setup_link = None
             await self._stop()
             await super().unload()
             self._subscribed = False
             self._keys.clear()
             self._secret_hashes.clear()
+
+    @tool(
+        name="provider_fallback_setup",
+        description=(
+            "Open provider/model setup. Nothing changes until the user "
+            "reviews and applies the choices."
+        ),
+        summarize=False,
+    )
+    async def provider_fallback_setup(self) -> str:
+        from pathlib import Path
+
+        from .setup_engine import SetupEngine
+        from .setup_web import create_setup_app
+
+        async with self._lock:
+            if self._setup_server is not None:
+                await self.wingman.ui.show_dialog(
+                    "Provider fallback setup", f"[Open setup]({self._setup_link})"
+                )
+                return "The existing setup link is shown again in Wingman's setup dialog."
+            import secrets
+
+            import httpx
+
+            # Tool turns may use a temporary event loop. The prepared skill's
+            # lifecycle loop owns work which must survive that turn.
+            loop = self._core_loop
+            if loop is None or loop.is_closed() or not loop.is_running():
+                raise RuntimeError("provider_setup_lifecycle_loop_unavailable")
+            properties = {p.id: p.value for p in self.config.custom_properties}
+            core_port = properties.get("setup_core_port", 49111)
+
+            async def retrieve(name):
+                # Called by the setup listener; keep facade work on Core's loop.
+                future = asyncio.run_coroutine_threadsafe(
+                    self.wingman.secrets.retrieve(name, []), loop
+                )
+                return await asyncio.wrap_future(future)
+
+            def schedule_reload(directory):
+                async def reload():
+                    # Let the setup HTTP response finish before Core unloads it.
+                    await asyncio.sleep(0.5)
+                    try:
+                        async with httpx.AsyncClient(trust_env=False, timeout=60) as client:
+                            response = await client.post(
+                                f"http://127.0.0.1:{core_port}/config", json=directory
+                            )
+                            response.raise_for_status()
+                    except (httpx.HTTPError, ValueError):
+                        self.wingman.log.error(
+                            "Provider setup saved; Core reload failed. "
+                            "Reload the configuration in Wingman."
+                        )
+
+                loop.call_soon_threadsafe(lambda: loop.create_task(reload()))
+
+            engine = SetupEngine(
+                self.wingman.name,
+                Path(self.get_generated_files_dir())
+                / (hashlib.sha256(self.wingman.name.encode()).hexdigest() + "-setup-undo.json"),
+                retrieve,
+                port=core_port,
+                schedule_reload=schedule_reload,
+            )
+            token = secrets.token_urlsafe(40)
+            app = create_setup_app(engine, token)
+            server = OwnedServer(app, 0)
+            await asyncio.to_thread(server.start)
+            self._setup_server = server
+            self._setup_link = f"http://127.0.0.1:{server.port}/#{token}"
+
+            async def expire():
+                while True:
+                    await asyncio.sleep(max(1, 900 - (time.monotonic() - engine.last_activity)))
+                    if (
+                        not engine.active_requests
+                        and time.monotonic() - engine.last_activity >= 900
+                    ):
+                        break
+                async with self._lock:
+                    if self._setup_server is server:
+                        if not await asyncio.to_thread(server.stop):
+                            raise RuntimeError("provider_setup_cleanup_unknown")
+                        self._setup_server = None
+                        self._setup_link = None
+                        self._setup_expiry = None
+
+            self._setup_expiry = asyncio.run_coroutine_threadsafe(expire(), loop)
+            try:
+                await self.wingman.ui.show_dialog(
+                    "Provider fallback setup",
+                    f"[Open setup]({self._setup_link})\n\n"
+                    "Choose providers, models and their order. Nothing changes until you apply. "
+                    "The private setup link expires after 15 idle minutes; "
+                    "close this page when done.",
+                )
+            except BaseException:
+                self._setup_expiry.cancel()
+                self._setup_expiry = None
+                await asyncio.to_thread(server.stop)
+                self._setup_server = None
+                self._setup_link = None
+                raise
+            # The capability link is delivered only to the user's dialog, never
+            # through the conversation/model or diagnostic log.
+            return (
+                "Open the setup link in Wingman's Provider fallback setup dialog. "
+                "The link expires after 15 idle minutes."
+            )
 
     @tool(name="provider_fallback_status", description="Show provider fallback route status.")
     async def provider_fallback_status(self, role: str = "main") -> str:

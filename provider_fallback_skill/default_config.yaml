@@ -1,16 +1,22 @@
 module: skills.provider_fallback.main
 name: ProviderFallback
 api_version: 3
-version: 0.3.0
+version: 0.4.3
 display_name: Provider fallback
 author: Star Citizen Computer contributors
 description:
   en: Optional local OpenAI-compatible inference bridge with ordered provider routes.
 hint:
-  en: Configure routes and existing secret names, then start the bridge before selecting its loopback endpoint in Wingman. Provider calls may be billable.
+  en: Ask your Wingman to open provider fallback setup. Choose providers and models, review, apply and activate. Nothing changes until you apply. API calls may be billable.
 auto_activate: true
 discoverable_by_default: false
 custom_properties:
+  - id: setup_core_port
+    name: Wingman Core API port (advanced)
+    hint: Keep the default unless your Wingman Core API uses another port. This is only used when you open setup.
+    property_type: number
+    value: 49111
+    required: false
   - id: main_enabled
     name: Enable Main fallback
     hint: Enable the configured Main chain; API routes may incur charges.
