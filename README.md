@@ -43,6 +43,10 @@ To stop using Waterfall, restore the previous Core Main and Support settings bef
 - [24-task Main and Jev comparison](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png): synthetic source replay, not live gameplay evidence
 - [24-task Support comparison](benchmarks/SUPPORT-REPORT.md): separate memory, summary and tool-compression tasks
 
+“Provider defaults” leaves the provider's thinking settings unspecified. Haiku
+5.5 already uses adaptive thinking by default; it is not a separate model.
+The other Haiku rows explicitly choose an effort level or disable thinking.
+
 ### Main comparison
 
 ![Main comparison: 24 synthetic tool-workflow tasks; Jev-assisted runs include Waterfall's optional first-tool helper, not stock Jev](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
