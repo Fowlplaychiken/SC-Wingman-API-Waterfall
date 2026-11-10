@@ -11,7 +11,7 @@ The setup page uses the existing local Core API on port `49111`; change the adva
 | Main | Conversation requests and the existing Main-model tool flow | Off | Conversation provider: local/OpenAI-compatible, model `waterfall`, endpoint `http://127.0.0.1:4141/v1` |
 | Support | Only Support calls Core already schedules, such as memory and summaries | Off | Support Model: Remote, host `http://127.0.0.1`, port `4142` |
 
-Jev is Wingman's stock decision helper. Waterfall does not replace it or add a new decision path. Main and Support are independent; either can remain disabled.
+Jev remains Wingman's stock decision helper. An optional Main-route tool helper reuses it for an additional first-tool choice; it is off by default and separate from stock command handling. Support has no added Jev helper. Main and Support are independent; either can remain disabled.
 
 ## Main setup
 
