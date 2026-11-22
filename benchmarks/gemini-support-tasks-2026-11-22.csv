@@ -18,7 +18,7 @@ SUP24-M08,partial,fail,partial,partial,partial,fail,partial,fail
 SUP24-E01,pass,pass,pass,pass,pass,pass,pass,partial
 SUP24-E02,pass,pass,pass,pass,pass,fail,partial,pass
 SUP24-E03,pass,pass,pass,pass,pass,pass,pass,fail
-SUP24-E04,pass,partial,pass,pass,pass,pass,partial,fail
+SUP24-E04,pass,partial,pass,pass,pass,pass,pass,fail
 SUP24-E05,pass,pass,pass,pass,pass,pass,pass,pass
 SUP24-E06,pass,pass,pass,pass,pass,pass,pass,pass
 SUP24-E07,fail,pass,pass,pass,pass,pass,pass,fail
