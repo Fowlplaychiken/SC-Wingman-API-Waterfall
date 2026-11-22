@@ -1,0 +1,25 @@
+Case,Haiku 5.5 · personal API,Haiku 5.5 · Wingman hosted,Gemini 3.5 Flash-Lite,Gemini 3.8 Flash,Gemini 4 Hydrogen,Gemini 4 Neon,Gemini 4 Argon,Qwen3.5-4B (Nov 9)
+SUP24-C01,pass,pass,pass,pass,pass,pass,pass,partial
+SUP24-C02,pass,pass,pass,pass,pass,pass,pass,fail
+SUP24-C03,pass,pass,pass,pass,pass,pass,pass,fail
+SUP24-C04,pass,pass,partial,partial,pass,pass,partial,pass
+SUP24-C05,pass,pass,pass,pass,pass,pass,pass,fail
+SUP24-C06,pass,pass,pass,pass,pass,pass,pass,pass
+SUP24-C07,pass,pass,pass,partial,partial,partial,partial,fail
+SUP24-C08,pass,pass,partial,partial,pass,pass,pass,fail
+SUP24-M01,partial,partial,partial,partial,fail,fail,partial,fail
+SUP24-M02,pass,partial,partial,partial,fail,fail,pass,fail
+SUP24-M03,pass,partial,pass,partial,fail,fail,pass,fail
+SUP24-M04,partial,partial,partial,fail,pass,fail,partial,fail
+SUP24-M05,partial,partial,partial,partial,fail,fail,partial,pass
+SUP24-M06,partial,pass,pass,partial,partial,fail,pass,fail
+SUP24-M07,partial,partial,pass,pass,fail,pass,partial,fail
+SUP24-M08,partial,fail,partial,partial,partial,fail,partial,fail
+SUP24-E01,pass,pass,pass,pass,pass,pass,pass,partial
+SUP24-E02,pass,pass,pass,pass,pass,fail,partial,pass
+SUP24-E03,pass,pass,pass,pass,pass,pass,pass,fail
+SUP24-E04,pass,partial,pass,pass,pass,pass,partial,fail
+SUP24-E05,pass,pass,pass,pass,pass,pass,pass,pass
+SUP24-E06,pass,pass,pass,pass,pass,pass,pass,pass
+SUP24-E07,fail,pass,pass,pass,pass,pass,pass,fail
+SUP24-E08,pass,pass,pass,pass,pass,pass,pass,fail

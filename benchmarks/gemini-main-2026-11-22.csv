@@ -1,0 +1,11 @@
+role,kind,display,model,correct,partial,failed,unknown,scheduled,seconds,p90_seconds,per_1000,price_basis
+Main,initial,Haiku 5.5 · provider default,claude-haiku-5-5,16,5,0,3,24,2.3682019,4.10932367,1.0590791666666666,uncached
+Main,repeat,Haiku 5.5 · provider default · repeat,claude-haiku-5-5,21,1,0,2,24,2.3603171499999998,4.00397181,1.010025,uncached
+Main,initial,Haiku 5.5 · adaptive low,claude-haiku-5-5,19,4,0,1,24,2.52473875,3.0063483399999997,0.9293208333333333,estimate
+Main,repeat,Haiku 5.5 · adaptive low · repeat,claude-haiku-5-5,19,4,0,1,24,2.17910965,3.4086083499999997,0.9555875,estimate
+Main,initial,Gemini 3.5 Flash-Lite,google/gemini-3.5-flash-lite,17,5,2,0,24,2.5444463,3.7495246100000004,1.0928583333333335,reported
+Main,initial,Gemini 3.8 Flash,google/gemini-3.8-flash,19,4,1,0,24,5.5019243499999995,7.87117721,3.543812500000001,reported
+Main,initial,Gemini 4 Hydrogen,google/gemini-4-hydrogen,15,0,0,9,24,4.2221829500000005,9.7132346,11.376903125,reported
+Main,initial,Gemini 4 Neon,google/gemini-4-neon,18,0,0,6,24,5.91682205,11.156402770000001,23.911931250000006,reported
+Main,initial,Gemini 4 Argon,google/gemini-4-argon,19,2,0,3,24,9.6861627,14.49588715,10.666212500000002,reported
+Main,historical,Qwen3.5-4B · local · Nov 9,Qwen3.5-4B Q4_K_M,9,6,5,4,24,1.48411835,2.9195039099999995,0.0,local

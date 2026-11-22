@@ -75,16 +75,25 @@ Waterfall checks whether a request fits; it does not silently delete conversatio
 
 These comparisons help explain tradeoffs in the tested configurations. They use **AI-reviewed development fixtures**, not a human gold set, held-out qualification, or live gameplay. They do not establish that one model is best for every Wingman task. Timings exclude speech, UI and Core scheduling; cost estimates are not invoices, and unreported hosted billing remains unknown.
 
-### Main: conversation and tool workflows
+### Main · Conversation and tool workflows
 
-![Main comparison: 24 synthetic tool-workflow tasks; Jev-assisted runs include Waterfall's optional first-tool helper, not stock Jev](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
+![Fully correct tasks, median response time and API cost per 1,000 tasks for Haiku, Gemini and local Qwen](benchmarks/gemini-main-2026-11-22.png)
 
-The 24-task Main comparison includes an optional first-tool helper on selected routes. That helper is an additional experiment using the decision interface, separate from stock Jev behavior. [Main trial methods and results](benchmarks/REPORT.md).
+On the paired repeat, Haiku at provider defaults answered 21/24 correctly in 2.36 seconds. Explicit low effort answered 19/24 in 2.18 seconds. The first runs scored 16/24 and 19/24. [See the tasks, costs and scoring](benchmarks/gemini-2026-11-22.md).
 
-### Support: memory, summaries and tool-result compression
+<details>
+<summary>Earlier Main comparison with and without the optional Jev helper</summary>
 
-![Support comparison: separate 24-task memory, summary, and tool-response-compression fixture](benchmarks/WINGMAN-SUPPORT-24.png)
+![Direct Main model compared with optional Jev first-tool selection](benchmarks/WINGMAN-JEV-PAIRED-COMPARISON.png)
 
-Support uses a different 24-task workload and must not be combined with Main into one ranking. Hosted and direct conditions also differ in reasoning settings, so they do not isolate a hosting effect. [Support trial methods, scores and cost assumptions](benchmarks/SUPPORT-REPORT.md).
+This experiment adds a first-tool selection call to individual Main routes. Wingman’s stock Jev decisions have their own workflow. [Earlier Main trial and results](benchmarks/REPORT.md).
+
+</details>
+
+### Support · Memory, summaries and tool results
+
+![Background task correctness, median time and cost per 1,000 tasks for direct Haiku, hosted Haiku, Gemini and local Qwen](benchmarks/gemini-support-2026-11-22.png)
+
+Flash-Lite was quickest at 0.80 seconds and tied direct Haiku on fully correct answers. Haiku had the lower estimated API cost. Wingman-hosted Support drew on the Wingman account, whose billing was unreported. [Latest Support results](benchmarks/gemini-2026-11-22.md#support) · [Earlier hosted, direct and local comparison](benchmarks/SUPPORT-REPORT.md).
 
 “Provider defaults” leaves the provider's thinking settings unspecified. In the recorded Haiku 5.5 trials that meant adaptive thinking; other chart rows explicitly selected an effort level or disabled thinking.
