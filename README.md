@@ -90,10 +90,10 @@ This experiment adds a first-tool selection call to individual Main routes. Wing
 
 </details>
 
-### Support: memory, summaries and tool-result compression
+### Support · Memory, summaries and tool results
 
-![Support comparison: separate 24-task memory, summary, and tool-response-compression fixture](benchmarks/WINGMAN-SUPPORT-24.png)
+![Background task correctness, median time and cost per 1,000 tasks for direct Haiku, hosted Haiku, Gemini and local Qwen](benchmarks/gemini-support-2026-11-22.png)
 
-Support uses a different 24-task workload and must not be combined with Main into one ranking. Hosted and direct conditions also differ in reasoning settings, so they do not isolate a hosting effect. [Support trial methods, scores and cost assumptions](benchmarks/SUPPORT-REPORT.md).
+Flash-Lite was quickest at 0.80 seconds and tied direct Haiku on fully correct answers. Haiku had the lower estimated API cost. Wingman-hosted Support drew on the Wingman account, whose billing was unreported. [Latest Support results](benchmarks/gemini-2026-11-22.md#support) · [Earlier hosted, direct and local comparison](benchmarks/SUPPORT-REPORT.md).
 
 “Provider defaults” leaves the provider's thinking settings unspecified. In the recorded Haiku 5.5 trials that meant adaptive thinking; other chart rows explicitly selected an effort level or disabled thinking.
