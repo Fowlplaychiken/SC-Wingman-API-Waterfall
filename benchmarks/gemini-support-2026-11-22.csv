@@ -5,5 +5,5 @@ Support,initial,Gemini 3.5 Flash-Lite,google/gemini-3.5-flash-lite,17,7,0,0,24,0
 Support,initial,Gemini 3.8 Flash,google/gemini-3.8-flash,14,9,1,0,24,4.295121000002837,9.00902190998895,2.4815,reported
 Support,initial,Gemini 4 Hydrogen,google/gemini-4-hydrogen,16,3,5,0,24,5.361889149993658,6.822090290000778,4.4701875,partial charges
 Support,initial,Gemini 4 Neon,google/gemini-4-neon,15,1,8,0,24,7.346327349994681,9.849650779998047,7.310875,partial charges
-Support,initial,Gemini 4 Argon,google/gemini-4-argon,15,9,0,0,24,3.7973256000113906,6.509387399998377,2.63275,reported
+Support,initial,Gemini 4 Argon,google/gemini-4-argon,16,8,0,0,24,3.7973256000113906,6.509387399998377,2.63275,reported
 Support,historical,Qwen3.5-4B · local · Nov 9,Qwen3.5-4B Q4_K_M,6,2,16,0,24,1.2725618999975268,3.224168420015485,0,local
