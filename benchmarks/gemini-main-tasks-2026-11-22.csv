@@ -1,0 +1,25 @@
+Task,Haiku default,Haiku adaptive low,Gemini 3.5 Flash-Lite,Gemini 3.8 Flash,Gemini 4 Hydrogen,Gemini 4 Neon,Gemini 4 Argon,Haiku default repeat,Haiku adaptive low repeat
+log_distance,partial,partial,partial,partial,unknown,pass,pass,pass,partial
+uex_market,unknown,pass,partial,pass,unknown,unknown,unknown,pass,pass
+finance_missing_cost,unknown,unknown,partial,partial,unknown,unknown,unknown,unknown,unknown
+station_select,pass,pass,pass,pass,pass,pass,pass,pass,pass
+file_to_save,pass,pass,pass,pass,pass,pass,pass,pass,pass
+waypoint_distance,partial,pass,pass,pass,unknown,pass,pass,pass,pass
+binding_forward_reverse,partial,pass,pass,pass,pass,pass,pass,pass,pass
+game_log_two_reads,pass,pass,pass,pass,unknown,unknown,pass,pass,pass
+hullc_laranite_trade_plan,unknown,partial,partial,partial,unknown,unknown,partial,unknown,partial
+plain_quantum,partial,pass,partial,pass,pass,pass,pass,pass,pass
+cargo_math,pass,pass,pass,pass,pass,pass,pass,pass,pass
+binding_forward,pass,pass,pass,pass,pass,pass,pass,pass,pass
+binding_reverse,pass,pass,fail,pass,pass,pass,pass,pass,pass
+unknown_origin,pass,pass,pass,pass,unknown,pass,pass,pass,pass
+find_location,pass,pass,pass,pass,unknown,unknown,unknown,pass,pass
+uex_laranite,pass,pass,pass,partial,pass,pass,pass,pass,pass
+radio_song,pass,pass,pass,pass,pass,pass,pass,pass,pass
+radio_restart,pass,pass,pass,pass,pass,pass,pass,pass,pass
+radio_queue,pass,pass,pass,pass,pass,pass,pass,pass,pass
+radio_volume,pass,pass,pass,pass,pass,pass,pass,pass,pass
+chatter_status,pass,pass,pass,pass,pass,pass,pass,pass,pass
+provider_status,partial,partial,pass,pass,pass,pass,pass,partial,partial
+tablet_state,pass,pass,pass,pass,pass,pass,pass,pass,pass
+location_ambiguity,pass,partial,fail,fail,unknown,unknown,partial,pass,partial
